@@ -12,7 +12,7 @@
 - 区块浏览器 : https://filfox.info/zh/
 - 全节点 : lotus( https://github.com/filecoin-project/lotus )
 - 全节点rpc接口 : https://github.com/filecoin-project/lotus/blob/master/api/api_full.go
-
+- rpc权限 : 生成token ./lotus auth create-token --perm admin
 
 ## 如何测试
 
