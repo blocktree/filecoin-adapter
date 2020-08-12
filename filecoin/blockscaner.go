@@ -136,6 +136,16 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 		bs.wm.Log.Std.Info("block scanner scanning height: %d ...", currentHeight)
 
 		localBlock, err := bs.wm.GetBlockByHeight(currentHeight, true)
+		for{
+			if localBlock.Height >= currentHeight{	//如果从rpc获取到的高度，确实等于需要获取的高度
+				break
+			}else{ //获取到+1的高度，太小了，这样就要获取再加1的高度
+				nextHeight := currentHeight + 1
+				bs.wm.Log.Std.Info("block scanner scanning height: %d not found, find next height : %d", currentHeight, nextHeight)
+				currentHeight = nextHeight
+				localBlock, err = bs.wm.GetBlockByHeight(currentHeight, true)
+			}
+		}
 		if err != nil {
 			bs.wm.Log.Std.Info("GetBlockByHeight failed; unexpected error: %v", err)
 			break
