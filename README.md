@@ -8,10 +8,10 @@
 - [go-owcdrivers](https://github.com/blocktree/.git)
 
 ## 项目信息
-### 官网 : https://filecoin.io/
-### 区块浏览器 : https://filfox.info/zh/
-### 全节点 : lotus( https://github.com/filecoin-project/lotus )
-### 全节点rpc接口 : https://github.com/filecoin-project/lotus/blob/master/api/api_full.go
+- 官网 : https://filecoin.io/
+- 区块浏览器 : https://filfox.info/zh/
+- 全节点 : lotus( https://github.com/filecoin-project/lotus )
+- 全节点rpc接口 : https://github.com/filecoin-project/lotus/blob/master/api/api_full.go
 
 
 ## 如何测试
