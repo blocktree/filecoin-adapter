@@ -156,7 +156,7 @@ func (wm *WalletManager) GetBlockByHeight(height uint64, getTxs bool) (*OwBlock,
 		return nil, err
 	}
 
-	if getTxs{
+	if getTxs && tipSet.Height==height{
 		err := wm.SetOwBlockTransactions(&block)
 		if err != nil {
 			return nil, err

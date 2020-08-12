@@ -230,6 +230,7 @@ func (decoder *TransactionDecoder) CreateFilRawTransaction(wrapper openwallet.Wa
 		Nonce:   "0x" + strconv.FormatUint(nonce, 16),
 		Address: addr,
 		Message: message,
+		RSV : true,
 	}
 
 	keySigs = append(keySigs, &signature)
@@ -488,6 +489,7 @@ func (decoder *TransactionDecoder) createRawTransaction(wrapper openwallet.Walle
 		Nonce:   "0x" + strconv.FormatUint(nonce, 16),
 		Address: fromAddr,
 		Message: hash,
+		RSV: true,
 	}
 
 	keySigs = append(keySigs, &signature)
