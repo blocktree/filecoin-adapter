@@ -16,6 +16,7 @@ package filecoin
 
 import (
 	"github.com/astaxie/beego/config"
+	"github.com/blocktree/filecoin-adapter/filecoin_addrdec"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
 	"github.com/blocktree/filecoin-adapter/filecoin_rpc"
@@ -72,6 +73,7 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 	//数据文件夹
 	wm.Config.makeDataDir()
 	wm.Config.isTestNet, _ = c.Bool("isTestNet")
+	wm.Decoder = filecoin_addrdec.NewAddressDecoderV2( wm.Config.isTestNet )
 
 	wm.Config.FixedFee = 0
 

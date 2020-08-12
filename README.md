@@ -13,18 +13,18 @@
 - 全节点 : lotus( https://github.com/filecoin-project/lotus )
 - 全节点rpc接口 : https://github.com/filecoin-project/lotus/blob/master/api/api_full.go
 - rpc权限 : 生成token ./lotus auth create-token --perm admin
+- 获取测试币水龙头 : https://faucet.testnet.filecoin.io/send?address=hahaha
 
 ## 如何测试
 
 openwtester包下的测试用例已经集成了openwallet钱包体系，创建conf文件，新建FIL.ini文件，编辑如下内容：
 
 ```ini
-
 #wallet api url
 ServerAPI = "http://xxx.xxx.xxx.xxx:xxxxx/rpc/v0"
 
 # is testnet
-IsTest = true
+isTestNet = true
 
 # fix gas limit
 fixGasLimit = "1000000"
@@ -36,12 +36,11 @@ fixGasPrice = "1"
 accessToken = "xxxxx"
 
 # symbol name
-symbol = "TEST-FIL"
+symbol = "TESTFIL"
 
 # decimal
 decimal = 18
 
 # Cache data file directory, default = "", current directory: ./data
 dataDir = ""
-
 ```
