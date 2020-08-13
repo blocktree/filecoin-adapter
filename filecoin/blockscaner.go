@@ -218,10 +218,10 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 			bs.SaveLocalBlock(localBlock)
 
 			isFork = false
-		}
 
-		//通知新区块给观测者，异步处理
-		bs.newBlockNotify(localBlock, isFork)
+			//通知新区块给观测者，异步处理
+			bs.newBlockNotify(localBlock, isFork)
+		}
 	}
 
 	//重扫前N个块，为保证记录找到
