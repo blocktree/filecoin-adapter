@@ -34,6 +34,8 @@ func (bs *FILBlockScanner) SaveLocalBlockHead(blockHeight uint64, blockHash stri
 		Symbol: bs.wm.Symbol(),
 	}
 
+	bs.wm.Log.Std.Info("block scanner SaveLocalBlockHead: %v", header)
+
 	return bs.BlockchainDAI.SaveCurrentBlockHead(header)
 }
 
@@ -67,7 +69,7 @@ func (bs *FILBlockScanner) SaveLocalBlock(blockHeader *OwBlock) error {
 		Symbol:            bs.wm.Symbol(),
 	}
 
-	bs.wm.Log.Std.Info("block scanner Save Local Block: %v", header)
+	bs.wm.Log.Std.Info("block scanner SaveLocalBlock: %v", header)
 
 	return bs.BlockchainDAI.SaveLocalBlockHead(header)
 }
@@ -89,6 +91,8 @@ func (bs *FILBlockScanner) GetLocalBlock(height uint64) (*OwBlock, error) {
 		Height:        header.Height,
 		PrevBlockHash: header.Previousblockhash,
 	}
+
+	bs.wm.Log.Std.Info("block scanner GetLocalBlock: %v", block)
 
 	return block, nil
 }
