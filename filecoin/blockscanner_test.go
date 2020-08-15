@@ -33,7 +33,7 @@ func TestWalletManager_GetMaxTipsetHeight(t *testing.T) {
 
 func TestWalletManager_GetTipSetByHeight(t *testing.T) {
 	wm := testNewWalletManager()
-	tipSet, err := wm.GetTipSetByHeight( 122357 )
+	tipSet, err := wm.GetTipSetByHeight( 187878 )
 	if err != nil {
 		t.Errorf("GetTipSetByHeight failed, err=%v", err)
 		return
@@ -45,16 +45,16 @@ func TestWalletManager_GetTipSetByHeight(t *testing.T) {
 // {"jsonrpc":"2.0","result":{"Cids":[{"/":"bafy2bzaceczb5gpwzmfihank53ba43h4rjl23k5pcx7z43xdmo4p5fofh22qa"},{"/":"bafy2bzacedqopvxh452cn3quwua4qewpadmhlcciblpk653tsgni6grzatewi"}],"Blocks":[{"Miner":"t02020","Ticket":{"VRFProof":"tBAnDLr5XJx7uxmwrq17NeesRdY+dgXxBlLN2pPyGAMTaC+UPw8xPjh5PQ5GKX5EDFKNAN4yZFp/fb73F6i3Pato34Q/yuoj/SZ7sAItpiL/JeSgVjIOOZFBEv4u+K0K"},"ElectionProof":{"VRFProof":"obznWuJs20p9H/jpc9WiYdiHx8qzUusCJQ7mg1L8i8S4aj38i93vpcOO9eU1w3CpCPyEiArDNtOpDycWOyC/a/TxKPT6B6dcsI2sPqPfkVeI56aXErE86on0yohHiQ2P"},"BeaconEntries":[{"Round":205553,"Data":"gSneVmV85fYyZqj1ZFs1IAm/E9pz2BF17nllLx2zEMRFAEWxAm/hojE0tdypnZHGEvZvF5iZcfE7bmDGOv/MqL68pbS0cq/hLAmzLm9cBmIT5pBB3UsL8CeH6sirqxGC"}],"WinPoStProof":[{"PoStProof":3,"ProofBytes":"ssRkJlKHWssmh8abFvrN5x1rV3FQC9WAM2hYK2NNjDQEelUMx+CJ0P941uQylqCzkf7MQPJ0r3DjJgAPDOgPOBKsdPR4BXOurw1mY53Lx7xXpfwwROJqdea29tr3ktxHBZsArq3Sl5cCE43igpJsVcGhP6iD7Kb3L9w1gXcRkugnFgYoNZL3OEP5jLQY1z86opdTp1uwkr5eivEt+sqRSK+af7bC7GiQZ5Q61b2Vxs2+yuyd7+JsotDDdLwp5fXs"}],"Parents":[{"/":"bafy2bzacea24lcnctzolxc24k5utvvn33mgub4a3bfka7436jv32h3fviechg"},{"/":"bafy2bzaceaeqajdqvcfjgroissn5jhwcsk6yyyo5gh5h34igt5kdbmdmpny24"},{"/":"bafy2bzaceceld4xndb7tzrhmhoewlqhqstdjwtpfrenwpao7hzuhhf5s7hlzm"},{"/":"bafy2bzacebatzr6572caj66bjnodkkntvszmwyudujjrgl75vxlbl2hofxctk"},{"/":"bafy2bzaceb7roytvblia5jdl4g6z2jdoqzabqfepuef2speygklzrrba6evy2"}],"ParentWeight":"2095869309","Height":122369,"ParentStateRoot":{"/":"bafy2bzacedcsprjo7ipsouwhesmuy76aqu4mq4kwedc3cvq22wekv3bbbzbgg"},"ParentMessageReceipts":{"/":"bafy2bzacebadtki4dspp4edeuq4vekzfxvuohyhue6v2srovxxhxqfyp7gama"},"Messages":{"/":"bafy2bzacea6jmp6dzwdabjb6mo2mu6irgxubsiinoyc5vbfhtivqtqsw4jc7i"},"BLSAggregate":{"Type":2,"Data":"gkkY1vzxrXhhOL8PoGMhZ/9ZUuxXf0Q4zNey4PICHv89jDG4ylpGTUZ7WI/S+Yw6AvA5RCtzsqJ5cScF8JvkZhbpWjKMGhUKchZToR8sIYozlekY7QTSpPnMgRViDc+u"},"Timestamp":1595584025,"BlockSig":{"Type":2,"Data":"tfXovluNzXPsXJAr3CDWQtnXFTAJvSBjyyTZ2qghhBJxITKuDztqtCtmcFW2qq5VBsW7xAYNWZe3XmaXxtAo+10DC+TK0p45ZFzJYzd0+7mHwJZxS7pcu4nRERZCpgY8"},"ForkSignaling":0},{"Miner":"t01025","Ticket":{"VRFProof":"kiKgR5Yzty19xVnJRH3KijKm6Puzsp0ShK1ZKiJzxZI1Z6rZoqitdiUiZ4Z9xmSWCPlWfw5LFOEx5GcBPEvxff1nTMxO1l0/Mfz8+qZ2cLRCv6XGCBQKsuUYI3u/Esac"},"ElectionProof":{"VRFProof":"q+HGyokBxH7b3kv+VjfVPUJbA6OCBXsZ3Hbo0/yfjKVp3W1M/Xm5kki/C9wSr0yICzFEKoSXQrUDOkxFL5xKzY9doYDwJJX9/NSpDNQGs5g7bjwykdjdz+YIJm9J+X08"},"BeaconEntries":[{"Round":205553,"Data":"gSneVmV85fYyZqj1ZFs1IAm/E9pz2BF17nllLx2zEMRFAEWxAm/hojE0tdypnZHGEvZvF5iZcfE7bmDGOv/MqL68pbS0cq/hLAmzLm9cBmIT5pBB3UsL8CeH6sirqxGC"}],"WinPoStProof":[{"PoStProof":3,"ProofBytes":"ioNeFiUGuS52fHpowLovZGwn/DVjQDnTeheZAwDkw+L+FNov9EageJlwkI5kN8RMmKH+0uJgQQDi8MdoCrfxWcnd73aKxFQrlUmvFXHTlBtQPc1kaG1MDVbfpoXNFNnVC6n5MiH7+UFgvLMpNe06+xsIhCoouJwRDua67mZs0whl5vOermhVd65kiVKLHsCQhdJP/Bu+klrDA0iwGo64TD+p5psi8uxBASUqR6ffJ0YfBBAZYfoiiVHo7zrsaQ0N"}],"Parents":[{"/":"bafy2bzacea24lcnctzolxc24k5utvvn33mgub4a3bfka7436jv32h3fviechg"},{"/":"bafy2bzaceaeqajdqvcfjgroissn5jhwcsk6yyyo5gh5h34igt5kdbmdmpny24"},{"/":"bafy2bzaceceld4xndb7tzrhmhoewlqhqstdjwtpfrenwpao7hzuhhf5s7hlzm"},{"/":"bafy2bzacebatzr6572caj66bjnodkkntvszmwyudujjrgl75vxlbl2hofxctk"},{"/":"bafy2bzaceb7roytvblia5jdl4g6z2jdoqzabqfepuef2speygklzrrba6evy2"}],"ParentWeight":"2095869309","Height":122369,"ParentStateRoot":{"/":"bafy2bzacedcsprjo7ipsouwhesmuy76aqu4mq4kwedc3cvq22wekv3bbbzbgg"},"ParentMessageReceipts":{"/":"bafy2bzacebadtki4dspp4edeuq4vekzfxvuohyhue6v2srovxxhxqfyp7gama"},"Messages":{"/":"bafy2bzacec7r25pykl6mv4emdfetuzqfy7nr6ktqtfkn3jfbsxep2s5m5zqpu"},"BLSAggregate":{"Type":2,"Data":"pIa4n+boNM3ASENYFW6w8COwb+QG721i1E4Y26UY9Lv3s/8KAleTPEGAe0KLLzn1Ge3n694EUOzvtbDlUdkDdta4Em6RYHkwCdkuowneC6+qpzaWqPPFk64BeYQ8Zux/"},"Timestamp":1595584025,"BlockSig":{"Type":2,"Data":"kKXJ1TFhUvkEgu4d3O00GdzHYDKf1c+64R8SdLBt0OX7onJUj+Wd0LJBC7GK7bZDEV4JYJK4109i+Q+W58cK8H8LtPfQvWWG9FQMNufJn1nGw2K61PoUL+cIq4pSgR3Z"},"ForkSignaling":0}],"Height":122369},"id":1}
 func TestWalletManager_GetBlockByHeight(t *testing.T) {
 	wm := testNewWalletManager()
-	block, err := wm.GetBlockByHeight( 122357, true )
+	block, err := wm.GetBlockByHeight( 187877, true )
 	if err != nil {
 		t.Errorf("GetBlockByHeight failed, err=%v", err)
 		return
 	}
-	log.Infof("block: %v", block)
-	log.Infof("block.Hash: %v", block.Hash)
-	log.Infof("block.PrevBlockHash: %v", block.PrevBlockHash)
+	t.Logf("block: %v", block)// .Infof("block: %v", block)
+	t.Logf("block.Hash: %v", block.Hash)
+	t.Logf("block.PrevBlockHash: %v", block.PrevBlockHash)
 
-	currentHeight := 122369
+	currentHeight := 187877
 	for i := currentHeight; i > currentHeight-10; i-- {
 		block, err := wm.GetBlockByHeight( uint64(i), false )
 		if err != nil {
@@ -124,7 +124,7 @@ func TestWalletManager_GetTransactionInBlock(t *testing.T) {
 
 func TestWalletManager_GetAddrBalance(t *testing.T) {
 	wm := testNewWalletManager()
-	balance, err := wm.GetAddrBalance("t1qohr5bxzhendruau2vikej6nzmxf43o6kkgp6pq")
+	balance, err := wm.GetAddrBalance("t16dpawoyjfvfaezcnoyodez4ccqeymycxzsnl4iq")
 	if err != nil {
 		t.Errorf("GetAddrBalance failed, err=%v", err)
 		return

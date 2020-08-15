@@ -24,10 +24,13 @@ import (
 	"github.com/blocktree/openwallet/v2/common"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
+	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/filecoin-project/specs-actors/actors/crypto"
 	"github.com/tidwall/gjson"
 	"math/big"
 	"strconv"
+	"strings"
+	"time"
 
 	//"github.com/blocktree/quorum-adapter/quorum_addrdec"
 	"github.com/blocktree/filecoin-adapter/filecoin_rpc"
@@ -495,7 +498,23 @@ func (wm *WalletManager) GetAddressNonce(wrapper openwallet.WalletDAI, address s
 	if nonce_db == nil {
 		nonce = 0
 	} else {
-		nonce = common.NewString(nonce_db).UInt64()
+		//nonce = common.NewString(nonce_db).UInt64()
+		nonceStr := common.NewString(nonce_db)
+		nonceStrArr := strings.Split(string(nonceStr), "_")
+
+		if len(nonceStrArr)>1 {
+			saveTime := common.NewString(nonceStrArr[1]).UInt64()
+			now := uint64(time.Now().Unix())
+			diff, _ := math.SafeSub(now, saveTime)
+
+			if diff > 3600 { //当前时间减去保存时间，超过1小时，就不算了
+				nonce = 0
+			} else {
+				nonce = common.NewString(nonceStrArr[0]).UInt64()
+			}
+		}else{
+			nonce = common.NewString(nonce_db).UInt64()
+		}
 	}
 
 	wm.Log.Info(address, " get nonce : ", nonce, ", nonce_onchain : ", nonce_onchain)
@@ -514,8 +533,11 @@ func (wm *WalletManager) GetAddressNonce(wrapper openwallet.WalletDAI, address s
 // UpdateAddressNonce
 func (wm *WalletManager) UpdateAddressNonce(wrapper openwallet.WalletDAI, address string, nonce uint64) {
 	key := wm.Symbol() + "-nonce"
-	wm.Log.Info(address, " set nonce ", nonce)
-	err := wrapper.SetAddressExtParam(address, key, nonce)
+
+	nonceStr := strconv.FormatUint(nonce, 10) + "_" + strconv.FormatUint( uint64(time.Now().Unix()), 10)
+	wm.Log.Info(address, " set nonce ", nonceStr)
+
+	err := wrapper.SetAddressExtParam(address, key, nonceStr)
 	if err != nil {
 		wm.Log.Errorf("WalletDAI SetAddressExtParam failed, err: %v", err)
 	}
