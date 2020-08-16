@@ -52,6 +52,7 @@ type WalletConfig struct {
 
 	AccessToken string
 	Decimal int32
+	LessSumDiff uint64
 }
 
 func NewConfig() *WalletConfig {

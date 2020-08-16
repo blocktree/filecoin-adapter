@@ -333,7 +333,7 @@ func (wm *WalletManager) GetAddrBalance(address string) (*AddrBalance, error) {
 		return &AddrBalance{Address: address, Balance: big.NewInt(0), Nonce: uint64(0)}, nil
 	}
 
-	balance := big.NewInt(0).SetUint64( result.Get("Balance").Uint() )
+	balance, _ := big.NewInt(0).SetString( result.Get("Balance").Str, 10)
 	nonce := uint64(result.Get("Nonce").Uint())
 	realBalance := common.BigIntToDecimals(balance, wm.Decimal() )
 	return &AddrBalance{Address: address, Balance: balance, RealBalance: &realBalance, Nonce: nonce}, nil

@@ -87,6 +87,8 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 	}
 	wm.Config.Decimal = int32(decimalInt)
 
+	wm.Config.LessSumDiff = uint64(300)
+
 	return nil
 
 }
