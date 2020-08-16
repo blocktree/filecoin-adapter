@@ -319,20 +319,38 @@ func (wm *WalletManager) GetMaxTipsetHeight() (uint64, error) {
 
 // GetAddrBalance
 //{"jsonrpc":"2.0","result":"253178184999999999989664580","id":1}
+// Filecoin.StateGetActor , result: {"Code":{"/":"bafkqadlgnfwc6mjpmfrwg33vnz2a"},"Head":{"/":"bafy2bzaceaok4ygzwpbhvxilmtazy66shipkm3p5ko6t2eu6ymi63pf55wvui"},"Nonce":8,"Balance":"242838089036848770421"}
 func (wm *WalletManager) GetAddrBalance(address string) (*AddrBalance, error) {
+
+	blockCids := make([]interface{}, 0)
+
 	params := []interface{}{
 		address,
+		blockCids,
 	}
-	result, err := wm.WalletClient.Call("Filecoin.WalletBalance", params)
+	result, err := wm.WalletClient.Call("Filecoin.StateGetActor", params)
 	if err != nil {
 		return &AddrBalance{Address: address, Balance: big.NewInt(0), Nonce: uint64(0)}, nil
 	}
-	balance, ok := big.NewInt(0).SetString( result.Str, 10)
-	if !ok {
-		return &AddrBalance{Address: address, Balance: big.NewInt(0), Nonce: uint64(0)}, nil
-	}
+
+	balance := big.NewInt(0).SetUint64( result.Get("Balance").Uint() )
+	nonce := uint64(result.Get("Nonce").Uint())
 	realBalance := common.BigIntToDecimals(balance, wm.Decimal() )
-	return &AddrBalance{Address: address, Balance: balance, RealBalance: &realBalance, Nonce: uint64(0)}, nil
+	return &AddrBalance{Address: address, Balance: balance, RealBalance: &realBalance, Nonce: nonce}, nil
+
+	//params := []interface{}{
+	//	address,
+	//}
+	//result, err := wm.WalletClient.Call("Filecoin.WalletBalance", params)
+	//if err != nil {
+	//	return &AddrBalance{Address: address, Balance: big.NewInt(0), Nonce: uint64(0)}, nil
+	//}
+	//balance, ok := big.NewInt(0).SetString( result.Str, 10)
+	//if !ok {
+	//	return &AddrBalance{Address: address, Balance: big.NewInt(0), Nonce: uint64(0)}, nil
+	//}
+	//realBalance := common.BigIntToDecimals(balance, wm.Decimal() )
+	//return &AddrBalance{Address: address, Balance: balance, RealBalance: &realBalance, Nonce: uint64(0)}, nil
 }
 
 // MpoolGetNonce

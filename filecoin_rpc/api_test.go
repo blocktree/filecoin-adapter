@@ -28,15 +28,14 @@ func TestGetCall(t *testing.T) {
 	//method := "Filecoin.ChainGetTipSet"
 	//method := "Filecoin.StateGetReceipt"
 	//method := "Filecoin.MpoolGetNonce"
-	method := "Filecoin.MpoolEstimateGasPrice"
+	//method := "Filecoin.MpoolEstimateGasPrice"
+	method := "Filecoin.StateGetActor"
 
 	blockCids := make([]interface{}, 0)
 	//tipSetKey := []interface{}{ blockCids }
 
 	params := []interface{}{
-		0,
-		"t1wh2fhzvb5rcfoleedkupov442qp4hw34kzm52ki",
-		0,
+		"t1abuzgc6y4tirvo274gyayqvslfmgkua3ksuyu4y",
 		blockCids,
 	}
 
