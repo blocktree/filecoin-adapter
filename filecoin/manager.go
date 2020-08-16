@@ -356,18 +356,24 @@ func (wm *WalletManager) GetAddrBalance(address string) (*AddrBalance, error) {
 // MpoolGetNonce
 //rpc返回结果 : {"jsonrpc":"2.0","result":170152,"id":1}
 func (wm *WalletManager) GetAddrOnChainNonce(address string) (uint64, error) {
-	params := []interface{}{
-		address,
-	}
-	result, err := wm.WalletClient.Call("Filecoin.MpoolGetNonce", params)
+	//params := []interface{}{
+	//	address,
+	//}
+	//result, err := wm.WalletClient.Call("Filecoin.MpoolGetNonce", params)
+	//if err != nil {
+	//	return 0, err
+	//}
+	//nonce, err := strconv.ParseInt(result.String(), 10, 64)
+	//if err != nil {
+	//	return 0, err
+	//}
+	//
+	balanceItem, err := wm.GetAddrBalance(address)
 	if err != nil {
 		return 0, err
 	}
-	nonce, err := strconv.ParseInt(result.String(), 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	return uint64(nonce), nil
+
+	return balanceItem.Nonce, nil
 }
 
 // GetTransactionReceipt
