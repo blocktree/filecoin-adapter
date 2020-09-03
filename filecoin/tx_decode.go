@@ -366,22 +366,6 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 			continue
 		}
 
-		nonce_db, _ := wrapper.GetAddressExtParam(addrBalance.Address, addrBalance.Symbol + "-nonce")
-		if nonce_db != nil {
-			nonceStr := common.NewString(nonce_db)
-			nonceStrArr := strings.Split(string(nonceStr), "_")
-			if len(nonceStrArr)>1 {
-				saveTime := common.NewString(nonceStrArr[1]).UInt64()	//上次汇总此地址的时间，秒为单位
-				now := uint64(time.Now().Unix())
-				diff, _ := math.SafeSub(now, saveTime)
-
-				if diff < decoder.wm.Config.LessSumDiff {	// 少于配置的时间，就不要汇总此地址了
-					decoder.wm.Log.Std.Error("%v address nonce diff = %d ", addrBalance.Address, diff)
-					continue
-				}
-			}
-		}
-
 		//计算汇总数量 = 余额 - 保留余额
 		sumAmount_BI := new(big.Int)
 		sumAmount_BI.Sub(addrBalance_BI, retainedBalance)
@@ -411,6 +395,22 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 
 		sumAmount := common.BigIntToDecimals(sumAmount_BI, decoder.wm.Decimal())
 		fees := common.BigIntToDecimals(fee.Fee, decoder.wm.Decimal())
+
+		nonce_db, _ := wrapper.GetAddressExtParam(addrBalance.Address, addrBalance.Symbol + "-nonce")
+		if nonce_db != nil {
+			nonceStr := common.NewString(nonce_db)
+			nonceStrArr := strings.Split(string(nonceStr), "_")
+			if len(nonceStrArr)>1 {
+				saveTime := common.NewString(nonceStrArr[1]).UInt64()	//上次汇总此地址的时间，秒为单位
+				now := uint64(time.Now().Unix())
+				diff, _ := math.SafeSub(now, saveTime)
+
+				if diff < decoder.wm.Config.LessSumDiff {	// 少于配置的时间，就不要汇总此地址了
+					decoder.wm.Log.Std.Error("%v address nonce diff = %d ", addrBalance.Address, diff)
+					continue
+				}
+			}
+		}
 
 		decoder.wm.Log.Debug(
 			"address : ", addrBalance.Address,

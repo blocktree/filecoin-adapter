@@ -14,13 +14,14 @@ import (
 )
 
 const (
-	baseURL = "http://127.0.0.1:1234/rpc/v0" //fil_test_local
+	//baseURL = "http://127.0.0.1:1234/rpc/v0" //fil_test_local
+	baseURL = "http://47.57.26.144:20031/rpc/v0" //fil_test_remote
 	CidLength = 62
 )
 
 func TestGetCall(t *testing.T) {
 	client := Client{BaseURL:baseURL}
-	//method := "Filecoin.ChainHead"
+	method := "Filecoin.ChainHead"
 	//method := "Filecoin.ChainGetTipSetByHeight"
 	//method := "Filecoin.ChainGetBlock"
 	//method := "Filecoin.ChainGetBlockMessages"
@@ -29,14 +30,14 @@ func TestGetCall(t *testing.T) {
 	//method := "Filecoin.StateGetReceipt"
 	//method := "Filecoin.MpoolGetNonce"
 	//method := "Filecoin.MpoolEstimateGasPrice"
-	method := "Filecoin.StateGetActor"
+	//method := "Filecoin.StateGetActor"
 
-	blockCids := make([]interface{}, 0)
+	//blockCids := make([]interface{}, 0)
 	//tipSetKey := []interface{}{ blockCids }
 
 	params := []interface{}{
-		"t1abuzgc6y4tirvo274gyayqvslfmgkua3ksuyu4y",
-		blockCids,
+		//"t1abuzgc6y4tirvo274gyayqvslfmgkua3ksuyu4y",
+		//blockCids,
 	}
 
 	//for i := 0; i <= 10; i++ {

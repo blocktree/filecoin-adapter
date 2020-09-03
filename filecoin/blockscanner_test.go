@@ -124,7 +124,7 @@ func TestWalletManager_GetTransactionInBlock(t *testing.T) {
 
 func TestWalletManager_GetAddrBalance(t *testing.T) {
 	wm := testNewWalletManager()
-	balance, err := wm.GetAddrBalance("t16dpawoyjfvfaezcnoyodez4ccqeymycxzsnl4iq")
+	balance, err := wm.GetAddrBalance("t1abuzgc6y4tirvo274gyayqvslfmgkua3ksuyu4y")
 	if err != nil {
 		t.Errorf("GetAddrBalance failed, err=%v", err)
 		return

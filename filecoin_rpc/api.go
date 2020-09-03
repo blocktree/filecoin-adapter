@@ -71,6 +71,10 @@ func (c *Client) Call(method string, params []interface{}) (*gjson.Result, error
 	body["method"] = method
 	body["params"] = params
 
+	if c.Debug {
+		log.Debugf("url : %+v\n", c.BaseURL)
+	}
+
 	r, err := req.Post(c.BaseURL, req.BodyJSON(&body), authHeader)
 
 	if c.Debug {

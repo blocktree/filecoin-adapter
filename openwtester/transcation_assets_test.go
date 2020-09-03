@@ -212,7 +212,7 @@ func TestBatchTransfer(t *testing.T) {
 		to := toArr[i]
 		testGetAssetsAccountBalance(tm, walletID, accountID)
 
-		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "0.031", "", nil)
+		rawTx, err := testCreateTransactionStep(tm, walletID, accountID, to, "1.23", "", nil)
 		if err != nil {
 			return
 		}
@@ -243,14 +243,14 @@ func TestSummary(t *testing.T) {
 
 	walletID := "W5Gfeiz9NB9HVGqMpNqWDZMm1XFAQv2TRT"
 	accountID := "CCcjBvcwvh2eiL5Bpt5i4y2McYwcfVrZntSa6bgRktUw"
-	summaryAddress := "t1wh2fhzvb5rcfoleedkupov442qp4hw34kzm52ki"
+	summaryAddress := "t1jqjwa4vqv374gitefzyw6lst5lokuwdxf62fopi"
 
 	ClearAddressNonce(tm, walletID, accountID)
 
 	testGetAssetsAccountBalance(tm, walletID, accountID)
 
 	rawTxArray, err := testCreateSummaryTransactionStep(tm, walletID, accountID,
-		summaryAddress, "0.0001", "0.0001", "",
+		summaryAddress, "0.000000000000000282", "0.000000000000000282", "",
 		0, 100, nil)
 	if err != nil {
 		log.Errorf("CreateSummaryTransaction failed, unexpected error: %v", err)

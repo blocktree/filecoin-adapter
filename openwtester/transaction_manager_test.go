@@ -168,8 +168,7 @@ func TestGetAddressBalance(t *testing.T) {
 	bs := assetsMgr.GetBlockScanner()
 
 	addrs := []string{
-		"t1ih5rngskzgym2qc7qargxdm3jcyoup2dm4tq2ly",	//95.983943499999999153
-		"t1wh2fhzvb5rcfoleedkupov442qp4hw34kzm52ki",  //298.516056500000000001
+		"t16dpawoyjfvfaezcnoyodez4ccqeymycxzsnl4iq",	//7.161410963146223911
 	}
 
 	balances, err := bs.GetBalanceByAddress(addrs...)

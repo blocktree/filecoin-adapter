@@ -10,13 +10,14 @@ func TestAddressDecoder_AddressEncode(t *testing.T) {
 	dec := NewAddressDecoderV2(true)
 	addr, _ := dec.AddressEncode(pub, false)
 	t.Logf("addr: %s", addr)
-	//	t1mmls5uxmgab27jyybbm5lxxqmapptvlbo7pes7i
+
+	check := dec.AddressVerify(addr)
+	t.Logf("check: %v \n", check)
 }
 
-func TestAddressDecoder_AddressDecode(t *testing.T) {
-	addr := "t1mmls5uxmgab27jyybbm5lxxqmapptvlbo7pes7i"
 
+func TestAddressDecoder_VerifyAddress(t *testing.T) {
 	dec := NewAddressDecoderV2(true)
-	hash, _ := dec.AddressDecode(addr)
-	t.Logf("hash: %s", hex.EncodeToString(hash))
+	check := dec.AddressVerify("t1ojyfm5btrqq63zquewexr4hecynvq6yjyk5xv6q")
+	t.Logf("check: %v \n", check)
 }
