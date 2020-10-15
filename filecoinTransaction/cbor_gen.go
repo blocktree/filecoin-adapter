@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/filecoin-project/specs-actors/actors/abi"
+	"github.com/filecoin-project/go-state-types/abi"
 	cbg "github.com/whyrusleeping/cbor-gen"
 	xerrors "golang.org/x/xerrors"
 )
 
 var _ = xerrors.Errorf
 
-var lengthBufMessage = []byte{137}
+var lengthBufMessage = []byte{138}
 
 func (t *Message) MarshalCBOR(w io.Writer) error {
 	if t == nil {
@@ -26,15 +26,10 @@ func (t *Message) MarshalCBOR(w io.Writer) error {
 
 	scratch := make([]byte, 9)
 
-	// t.Version (int64) (int64)
-	if t.Version >= 0 {
-		if err := cbg.WriteMajorTypeHeaderBuf(scratch, w, cbg.MajUnsignedInt, uint64(t.Version)); err != nil {
-			return err
-		}
-	} else {
-		if err := cbg.WriteMajorTypeHeaderBuf(scratch, w, cbg.MajNegativeInt, uint64(-t.Version-1)); err != nil {
-			return err
-		}
+	// t.Version (uint64) (uint64)
+
+	if err := cbg.WriteMajorTypeHeaderBuf(scratch, w, cbg.MajUnsignedInt, uint64(t.Version)); err != nil {
+		return err
 	}
 
 	// t.To (address.Address) (struct)
@@ -58,11 +53,6 @@ func (t *Message) MarshalCBOR(w io.Writer) error {
 		return err
 	}
 
-	// t.GasPrice (big.Int) (struct)
-	if err := t.GasPrice.MarshalCBOR(w); err != nil {
-		return err
-	}
-
 	// t.GasLimit (int64) (int64)
 	if t.GasLimit >= 0 {
 		if err := cbg.WriteMajorTypeHeaderBuf(scratch, w, cbg.MajUnsignedInt, uint64(t.GasLimit)); err != nil {
@@ -72,6 +62,16 @@ func (t *Message) MarshalCBOR(w io.Writer) error {
 		if err := cbg.WriteMajorTypeHeaderBuf(scratch, w, cbg.MajNegativeInt, uint64(-t.GasLimit-1)); err != nil {
 			return err
 		}
+	}
+
+	// t.GasFeeCap (big.Int) (struct)
+	if err := t.GasFeeCap.MarshalCBOR(w); err != nil {
+		return err
+	}
+
+	// t.GasPremium (big.Int) (struct)
+	if err := t.GasPremium.MarshalCBOR(w); err != nil {
+		return err
 	}
 
 	// t.Method (abi.MethodNum) (uint64)
@@ -89,13 +89,15 @@ func (t *Message) MarshalCBOR(w io.Writer) error {
 		return err
 	}
 
-	if _, err := w.Write(t.Params); err != nil {
+	if _, err := w.Write(t.Params[:]); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (t *Message) UnmarshalCBOR(r io.Reader) error {
+	*t = Message{}
+
 	br := cbg.GetPeeker(r)
 	scratch := make([]byte, 8)
 
@@ -107,34 +109,23 @@ func (t *Message) UnmarshalCBOR(r io.Reader) error {
 		return fmt.Errorf("cbor input should be of type array")
 	}
 
-	if extra != 9 {
+	if extra != 10 {
 		return fmt.Errorf("cbor input had wrong number of fields")
 	}
 
-	// t.Version (int64) (int64)
+	// t.Version (uint64) (uint64)
+
 	{
-		maj, extra, err := cbg.CborReadHeaderBuf(br, scratch)
-		var extraI int64
+
+		maj, extra, err = cbg.CborReadHeaderBuf(br, scratch)
 		if err != nil {
 			return err
 		}
-		switch maj {
-		case cbg.MajUnsignedInt:
-			extraI = int64(extra)
-			if extraI < 0 {
-				return fmt.Errorf("int64 positive overflow")
-			}
-		case cbg.MajNegativeInt:
-			extraI = int64(extra)
-			if extraI < 0 {
-				return fmt.Errorf("int64 negative oveflow")
-			}
-			extraI = -1 - extraI
-		default:
-			return fmt.Errorf("wrong type for int64 field: %d", maj)
+		if maj != cbg.MajUnsignedInt {
+			return fmt.Errorf("wrong type for uint64 field")
 		}
+		t.Version = uint64(extra)
 
-		t.Version = int64(extraI)
 	}
 	// t.To (address.Address) (struct)
 
@@ -177,15 +168,6 @@ func (t *Message) UnmarshalCBOR(r io.Reader) error {
 		}
 
 	}
-	// t.GasPrice (big.Int) (struct)
-
-	{
-
-		if err := t.GasPrice.UnmarshalCBOR(br); err != nil {
-			return xerrors.Errorf("unmarshaling t.GasPrice: %w", err)
-		}
-
-	}
 	// t.GasLimit (int64) (int64)
 	{
 		maj, extra, err := cbg.CborReadHeaderBuf(br, scratch)
@@ -210,6 +192,24 @@ func (t *Message) UnmarshalCBOR(r io.Reader) error {
 		}
 
 		t.GasLimit = int64(extraI)
+	}
+	// t.GasFeeCap (big.Int) (struct)
+
+	{
+
+		if err := t.GasFeeCap.UnmarshalCBOR(br); err != nil {
+			return xerrors.Errorf("unmarshaling t.GasFeeCap: %w", err)
+		}
+
+	}
+	// t.GasPremium (big.Int) (struct)
+
+	{
+
+		if err := t.GasPremium.UnmarshalCBOR(br); err != nil {
+			return xerrors.Errorf("unmarshaling t.GasPremium: %w", err)
+		}
+
 	}
 	// t.Method (abi.MethodNum) (uint64)
 
@@ -238,8 +238,12 @@ func (t *Message) UnmarshalCBOR(r io.Reader) error {
 	if maj != cbg.MajByteString {
 		return fmt.Errorf("expected byte array")
 	}
-	t.Params = make([]byte, extra)
-	if _, err := io.ReadFull(br, t.Params); err != nil {
+
+	if extra > 0 {
+		t.Params = make([]uint8, extra)
+	}
+
+	if _, err := io.ReadFull(br, t.Params[:]); err != nil {
 		return err
 	}
 	return nil

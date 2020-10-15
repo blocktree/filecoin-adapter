@@ -25,7 +25,7 @@ import (
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
 	"github.com/ethereum/go-ethereum/common/math"
-	"github.com/filecoin-project/specs-actors/actors/crypto"
+	"github.com/filecoin-project/go-state-types/crypto"
 	"github.com/tidwall/gjson"
 	"math/big"
 	"strconv"
@@ -248,6 +248,16 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 					if exitCode!=OK_ExitCode{
 						continue
 					}
+
+					//判断一下余额是否足够
+					balance, err := wm.GetAddrBalance( transaction.To )
+					if err != nil {
+						continue
+					}
+					if balance.Balance.Cmp(amountBigInt)==-1 {
+						continue
+					}
+
 					itemTransactions[transactinIndex].Gas = strconv.FormatInt( gasUsed, 10)
 				}
 
