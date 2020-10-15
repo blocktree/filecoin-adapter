@@ -231,7 +231,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 
 			_, ok := transactionCidMap[ transaction.Hash ]
 			if !ok { //找不到的时候补充
-				itemTransactions[transactinIndex].BlockHash = filBlock.BlockHeaderCid
+				itemTransactions[transactinIndex].BlockHash = owBlock.Hash
 				itemTransactions[transactinIndex].BlockHeight = filBlock.Height
 				itemTransactions[transactinIndex].TimeStamp = filBlock.Timestamp
 
