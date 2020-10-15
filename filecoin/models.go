@@ -48,6 +48,16 @@ type TipSet struct {
 	Height uint64 			`json:"Height"`
 }
 
+type ActiveSync struct {
+	Stage uint64 `json:"Stage"`
+	Height uint64 `json:"Height"`
+	Message string `json:Message`
+}
+
+type ActiveSyncList struct {
+	ActiveSyncs []ActiveSync `json:ActiveSyncs`
+}
+
 //BlockHeader 区块链头
 func (b *OwBlock) BlockHeader() *openwallet.BlockHeader {
 
