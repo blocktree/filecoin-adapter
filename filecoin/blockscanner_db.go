@@ -69,7 +69,7 @@ func (bs *FILBlockScanner) SaveLocalBlock(blockHeader *OwBlock) error {
 		Symbol:            bs.wm.Symbol(),
 	}
 
-	bs.wm.Log.Std.Info("block scanner SaveLocalBlock: %v", header)
+	//bs.wm.Log.Std.Info("block scanner SaveLocalBlock: %v", header)
 
 	return bs.BlockchainDAI.SaveLocalBlockHead(header)
 }

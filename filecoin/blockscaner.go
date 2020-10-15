@@ -341,7 +341,7 @@ func (bs *FILBlockScanner) newBlockNotify(block *OwBlock, isFork bool) {
 	header.Fork = isFork
 	header.Symbol = bs.wm.Config.Symbol
 
-	bs.wm.Log.Std.Info("block scanner new Block Notify: %v", header)
+	//bs.wm.Log.Std.Info("block scanner new Block Notify: %v", header)
 
 	bs.NewBlockNotify(header)
 }
@@ -792,7 +792,7 @@ func (bs *FILBlockScanner) SaveLocalNewBlock(blockHeight uint64, blockHash strin
 		Symbol: bs.wm.Symbol(),
 	}
 
-	bs.wm.Log.Std.Info("block scanner Save Local New Block: %v", header)
+	//bs.wm.Log.Std.Info("block scanner Save Local New Block: %v", header)
 
 	return bs.BlockchainDAI.SaveCurrentBlockHead(header)
 }
