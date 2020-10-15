@@ -89,6 +89,8 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 
 	wm.Config.LessSumDiff = uint64(300)
 
+	wm.Config.ignoreCheckBalance, _ = c.Bool("ignoreCheckBalance")
+
 	return nil
 
 }

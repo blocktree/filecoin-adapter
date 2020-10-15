@@ -49,6 +49,8 @@ type WalletConfig struct {
 	FixedFee int64
 	//是否测试网络
 	isTestNet bool
+	//扫块充值，是否检查目标地址余额
+	ignoreCheckBalance bool
 
 	AccessToken string
 	Decimal int32
