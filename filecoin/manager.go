@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"github.com/blocktree/filecoin-adapter/filecoinTransaction"
 	"github.com/blocktree/filecoin-adapter/filecoin_addrdec"
+	"github.com/blocktree/go-owcrypt"
 	"github.com/blocktree/openwallet/v2/common"
 	"github.com/blocktree/openwallet/v2/log"
 	"github.com/blocktree/openwallet/v2/openwallet"
@@ -506,7 +507,8 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 
 func GetBlockFromTipSet(tipSet *TipSet) (OwBlock, error){
 	block := OwBlock{}
-	block.Hash = string( encodeKey( tipSet.BlkCids ) )
+	//block.Hash = string( encodeKey( tipSet.BlkCids ) )
+	block.Hash = hex.EncodeToString( encodeKey( tipSet.BlkCids ) )
 
 	parentCids := make([]string, 0)
 	parentCidMap := make(map[string]string) //防止重复用的map
@@ -521,7 +523,8 @@ func GetBlockFromTipSet(tipSet *TipSet) (OwBlock, error){
 		block.Timestamp = innerBlock.Timestamp
 	}
 
-	block.PrevBlockHash = string( encodeKey(parentCids) )
+	//block.PrevBlockHash = string( encodeKey(parentCids) )
+	block.PrevBlockHash = hex.EncodeToString( encodeKey( parentCids ) )
 	block.Height = tipSet.Height
 	block.TipSet = tipSet
 
@@ -534,7 +537,12 @@ func encodeKey(cids []string) []byte {
 		// bytes.Buffer.Write() err is documented to be always nil.
 		_, _ = buffer.Write( []byte(c) )
 	}
-	return buffer.Bytes()
+
+
+
+	newHash := owcrypt.Hash(buffer.Bytes(), 0, owcrypt.HASH_ALG_SHA256)
+	return newHash
+	//return buffer.Bytes()
 }
 
 func CustomAddressEncode(address string) string {
