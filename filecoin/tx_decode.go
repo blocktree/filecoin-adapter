@@ -329,8 +329,8 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 	var (
 		rawTxArray      = make([]*openwallet.RawTransaction, 0)
 		accountID       = sumRawTx.Account.AccountID
-		minTransfer     = big.NewInt(int64(convertFromAmount(sumRawTx.MinTransfer, decoder.wm.Decimal())))
-		retainedBalance = big.NewInt(int64(convertFromAmount(sumRawTx.RetainedBalance, decoder.wm.Decimal())))
+		minTransfer     = ConvertFromAmount(sumRawTx.MinTransfer, decoder.wm.Decimal())
+		retainedBalance = ConvertFromAmount(sumRawTx.RetainedBalance, decoder.wm.Decimal())
 	)
 
 	if minTransfer.Cmp(retainedBalance) < 0 {
@@ -372,7 +372,7 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 	for _, addrBalance := range addrBalanceArray {
 
 		//检查余额是否超过最低转账
-		addrBalance_BI := big.NewInt(int64(convertFromAmount(addrBalance.Balance, decoder.wm.Decimal())))
+		addrBalance_BI := ConvertFromAmount(addrBalance.Balance, decoder.wm.Decimal())
 
 		if addrBalance_BI.Cmp(minTransfer) < 0 {
 			continue

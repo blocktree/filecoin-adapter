@@ -222,7 +222,14 @@ func GetBigIntAmountStr(amountStr string, amountDecimal int32) string{
 }
 
 // amount 字符串转为最小单位的表示
-func convertFromAmount(amountStr string, amountDecimal int32) uint64 {
+func ConvertFromAmount(amountStr string, amountDecimal int32) *big.Int {
+	//bigAmountStr := GetBigIntAmountStr(amountStr, amountDecimal)
+	r := common.StringNumToBigIntWithExp(amountStr, amountDecimal)
+	return r
+}
+
+// amount 字符串转为最小单位的表示
+func OldConvertFromAmount(amountStr string, amountDecimal int32) uint64 {
 	r, _ := strconv.ParseInt(GetBigIntAmountStr(amountStr, amountDecimal), 10, 64)
 	return uint64( r )
 }
