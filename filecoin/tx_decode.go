@@ -424,7 +424,7 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 			}
 		}
 
-		decoder.wm.Log.Debug(
+		decoder.wm.Log.Info(
 			"address : ", addrBalance.Address,
 			" balance : ", addrBalance.Balance,
 			" fees : ", fees,
