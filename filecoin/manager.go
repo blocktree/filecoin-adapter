@@ -27,6 +27,7 @@ import (
 	"github.com/blocktree/openwallet/v2/openwallet"
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/filecoin-project/go-state-types/crypto"
+	"github.com/filecoin-project/specs-actors/actors/builtin"
 	"github.com/tidwall/gjson"
 	"math/big"
 	"strconv"
@@ -417,23 +418,23 @@ func (wm *WalletManager) GetAddrOnChainNonce(address string) (uint64, error) {
 // GetTransactionReceipt
 // //{"jsonrpc":"2.0","result":{"BlsMessages":[{"Version":0,"To":"t021661","From":"t3vpdi3tg2oppc4bicav723n3e7bzlfaxhvcxjbl72qpe7hra4aggh6oekit3saswmrq5trjap2kdyubpfwxcq","Nonce":68773,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMZlyzYKlgmAAFVwh8g78Wdao2sMOq1YR/WjzB33viwbeHwYyfenrp2Qq9pGU4aAAGhw4AaAJpCbw=="},{"Version":0,"To":"t021661","From":"t3vpdi3tg2oppc4bicav723n3e7bzlfaxhvcxjbl72qpe7hra4aggh6oekit3saswmrq5trjap2kdyubpfwxcq","Nonce":68774,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMZlzLYKlgmAAFVwh8gzIjaV/osvdivwN4QjAQEd8Y9LwlB/ASCwzm3IVOW3jYaAAGhyIAaAJpCbw=="},{"Version":0,"To":"t0122507","From":"t3ufwpcpo5f4goc2xn3q3rnj32dgrzcud5q7uj3sctxdx2jcr2as7rslztiky7lv6b5vhup75s3cjwhmzwv2va","Nonce":7,"Value":"1000","GasPrice":"1","GasLimit":100000000000,"Method":5,"Params":"hAGBAIGCCFjAorsoEG0M4kuBcV/fOIsqUK42nFBdUXC3biMtKrLjXjo/3FDKZweFSAGswEyYcusEtt1OZM3tO+4DM0OKgmp/qsvgoSVEnbzRxOwdcuAgOiTKVCVMIANb9oVjTh+yMFhGFW1Sy2+u2chgCTMkDQXJcAJ1hQbxyPh6l6wFZPQdZkfJxlk/MYb+3DThTlRFdIvfoYF4T7afAg1ti/APHpi0ii8+QwZnVl0/abBUnw0BRUqxfB657tN9H6eoAJhvvvqdQQA="},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33076,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAJUfdgqWCYAAVXCHyCO+B0AptwJsd26rx1OMo2AVXqTsYSnW2mmfNPgX8MAOxoAAZ1KgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33077,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAKIcNgqWCYAAVXCHyCFtFiQ216K21jSpt+ZHGgPoziR3ddeCq0p7iy6GNF7KBoAAZTYgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33078,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAPUEdgqWCYAAVXCHyA/M7w8EUwOz181SnDm3B3LcevtfWywHGcOnY3UVvVaHxoAAZ05gBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33079,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAWoAdgqWCYAAVXCHyCZ0tQsh8BZvvCW9/8CJbH7sJRVZZ+9rNiQvRrOgkv+OBoAAZzhgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33080,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAV4B9gqWCYAAVXCHyAZ3aOFbRNBm8AJImJIqYog5qZ18BHXnny9/2VthSFWDhoAAZ0jgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33081,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAYsB9gqWCYAAVXCHyADT9DB2XFFdRoHcpbcMHeSvSWTTY9Y9TqG+VKqMmBSSRoAAZ1GgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33082,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAVMB9gqWCYAAVXCHyCw6KUqZOqO8X8sHKKB2QlOjtHuuFIuTsfi2TEq/h4CGBoAAZlXgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33083,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAXgAtgqWCYAAVXCHyA/5vTQ7aiZ/LWlh0UZxUhDi6RLTS6EJz2bSbD1wxXVRhoAAZz9gBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33084,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAQwHNgqWCYAAVXCHyDRyA65srgBUmzA6Mv9t+OG6B5d1gXMlo9pJ1nRWWZuBxoAAZ4tgBoAFPMe"},{"Version":0,"To":"t0121681","From":"t3q7sm6stkn3ynqkiinxnprijynpwwpbigdq2umzk7w54eii4a6jlzb7yz23u5l2lg4xm43w5zopn74n5aybra","Nonce":33085,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMaAAb4BNgqWCYAAVXCHyBkmk85/8Fhm8KoXNBOu5q/5OlIX38umspxhOiqP0fnYBoAAZ0ygBoAFPMe"},{"Version":0,"To":"t04067","From":"t3rbq4ijj5owypedib5txu7fbmeq3x27znjgd3ctpchmuu27gilaqnmqe5vw3v6emtv7tzj3trjbhpux4j4m4a","Nonce":13414,"Value":"113624963406258","GasPrice":"1","GasLimit":1000000,"Method":7,"Params":"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"},{"Version":0,"To":"t0120843","From":"t3w3ycyp42virtnhxrh3l7zt3nvvydyyofyfwvytiqwye2alxgul4oecnenahaer3ydki33dwzndh72dt2hrfa","Nonce":1722,"Value":"0","GasPrice":"1","GasLimit":1000000,"Method":6,"Params":"hgMZBY/YKlgmAAFVwh8gBPNNDQ60nk5YyiGwwdHnaD2XKU1fYHi//Fhq5nG3aSIaAAGhEYAaAJpIaQ=="},{"Version":0,"To":"t0118768","From":"t3qyssqgkgqxa6ims36v3zsfutjhmj5zeljfob7nfsyhkq7ursmkjsdt3bkapbyrhetuobjfzknls2ianmeona","Nonce":122753,"Value":"113624963406258","GasPrice":"1","GasLimit":1000000,"Method":7,"Params":"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"},{"Version":0,"To":"t0121289","From":"t3v7rz7tkyhtscerb3hwyloyh5424yxj4tc2kjc7wg7ied35bxodrlnfbypomg7zetkomvplmpxlcjvz6jqabq","Nonce":9726,"Value":"113624963406258","GasPrice":"1","GasLimit":1000000,"Method":7,"Params":"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"},{"Version":0,"To":"t0121289","From":"t3v7rz7tkyhtscerb3hwyloyh5424yxj4tc2kjc7wg7ied35bxodrlnfbypomg7zetkomvplmpxlcjvz6jqabq","Nonce":9727,"Value":"113624963406258","GasPrice":"1","GasLimit":1000000,"Method":7,"Params":"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"}],"SecpkMessages":[{"Message":{"Version":0,"To":"t1wh2fhzvb5rcfoleedkupov442qp4hw34kzm52ki","From":"t1hw4amnow4gsgk2ottjdpdverfwhaznyrslsmoni","Nonce":102027,"Value":"50000000000000000000","GasPrice":"0","GasLimit":10000,"Method":0,"Params":""},"Signature":{"Type":1,"Data":"LVyd5LVrTQrBjd1yWT+5W/hpCCbSgGcAq2+dh4P6ktpPi9dqbSeDodHaj12kljJj3t8UEJNR1PdJDtJLWRy32gA="}},{"Message":{"Version":0,"To":"t1wh2fhzvb5rcfoleedkupov442qp4hw34kzm52ki","From":"t1hw4amnow4gsgk2ottjdpdverfwhaznyrslsmoni","Nonce":102028,"Value":"50000000000000000000","GasPrice":"0","GasLimit":10000,"Method":0,"Params":""},"Signature":{"Type":1,"Data":"TQRG6OyFQWZkVFBXb7pEsEiRCgaMn65rH8DwE4cQNuk+iEdnlHz+0T4VMQc3F36QAkHMQo8MRLKkgfhZPc4IZwE="}}],"Cids":[{"/":"bafy2bzacebehdtyulmuwnli7kehcdzhf7e7gnfxwcdwpelm5q7r63vuelya7a"},{"/":"bafy2bzacedhss6fmspdhupkux454xucetejmi74c7spqm32ddukf6sxiievey"},{"/":"bafy2bzaceah32k363smx3d7ppkkmaho4fonkxhyonpf3wyw4724op652dm4wo"},{"/":"bafy2bzaceafw3xgfjx5phdntsqggwssko3gnt4rwhbftjjzmictodk6qpds6w"},{"/":"bafy2bzacedexamhqmmifkcjfqbfpxo5b3ppjh2b6mdts5o7zvdoygecmdnc2w"},{"/":"bafy2bzaceacuo3phoa45wbpsge7s6f4wxqhfhi2w6koe2pkjmrf2itdj6jl6g"},{"/":"bafy2bzacebomwtsdtlto53hcybq6uqubsxe6q3plqeeualji2dsk3sgy3krfi"},{"/":"bafy2bzacedujiw7264z6iaevm7jmsqkeng4bhajgjdy7mux7zmf47ko2umice"},{"/":"bafy2bzaced7ar6fr266lgpxirdk27kirszxkoeyehvz57xlu5iz4u7gyfgcgq"},{"/":"bafy2bzacea2ryrhfaahz3dtrdccxo5kebhqftx24it3ddssvmuj4n3cgq4oq4"},{"/":"bafy2bzacea37yi33ld7vwpp7q5qactzh6qkcdbrjzi4gdbpvzfxkrgvqkyry4"},{"/":"bafy2bzaceblvbrugqma6gqdb53pwtudd7x65krvecezdb5tndrcsg4s3chudm"},{"/":"bafy2bzaceawpa3nwq6o2xsa6emfs6lb4q6qx2ntxoftbuwu5frxpelgl3qkxu"},{"/":"bafy2bzaceagsy2tap4bgkrwr2kvf2arxqek65wq3g23np4p4npd566xl27xxm"},{"/":"bafy2bzacecmcn4vnkqh3jvlobz6tfmowvkwdxajivyuycuyjr5rjbhgtnhzxc"},{"/":"bafy2bzacedrkd3q6g2jm4zsx3lhocxw3c76ivxv6o7jwnnjbjkus52cr4v67y"},{"/":"bafy2bzacebi6dc7tnfnvniokztzukiydkh2vjtntuxzffzr5h2d2mafc353tm"},{"/":"bafy2bzaceanztjdyehtygknzvsq5hlnebzinvxrdbv3u6tlg7ldhuzhuqbri2"},{"/":"bafy2bzacebxpq7qtous62tixy4qxwdhejvzh2qrblayq43lkitlhbfyo6ugas"},{"/":"bafy2bzacebmgwsmhibuz7hrueg2eiqyxneypuatz4ajhh6pfhc5w5prgrclqk"}]},"id":1}
 func (wm *WalletManager) GetTransactionReceipt(txCid string) (int64, int64, error) {
-	//callMsg := map[string]interface{}{
-	//	"/" : txCid,
-	//}
-	//
-	//params := []interface{}{ callMsg, nil}
-	//
-	//result, err := wm.WalletClient.Call("Filecoin.StateGetReceipt", params)
-	//if err != nil {
-	//	return -1, -1, err
-	//}
-	//
-	//exitCode := gjson.Get(result.Raw, "ExitCode").Int()
-	//gasUsed := gjson.Get(result.Raw, "GasUsed").Int()
-	//
-	//return exitCode, gasUsed, nil
+	callMsg := map[string]interface{}{
+		"/" : txCid,
+	}
 
-	return OK_ExitCode, 0, nil
+	params := []interface{}{ callMsg, nil}
+
+	result, err := wm.WalletClient.Call("Filecoin.StateGetReceipt", params)
+	if err != nil {
+		return -1, -1, err
+	}
+
+	exitCode := gjson.Get(result.Raw, "ExitCode").Int()
+	gasUsed := gjson.Get(result.Raw, "GasUsed").Int()
+
+	return exitCode, gasUsed, nil
+
+	//return OK_ExitCode, 0, nil
 }
 
 func (wm *WalletManager) SendRawTransaction( message *filecoinTransaction.Message, signature, accessToken string) (string, error){
@@ -461,8 +462,40 @@ func (wm *WalletManager) SendRawTransaction( message *filecoinTransaction.Messag
 	return txHash, nil
 }
 
-func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, value *big.Int, data []byte) (*txFeeInfo, error) {
+func (wm *WalletManager) GetEstimateGasPremium(from string, gasLimit *big.Int) (*big.Int, error) {
+	blockCids := make([]interface{}, 0)
 
+	params := []interface{}{
+		0,
+		from,
+		gasLimit,
+		blockCids,
+	}
+	result, err := wm.WalletClient.Call("Filecoin.GasEstimateGasPremium", params)
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	gasPremium, _ := big.NewInt(0).SetString( result.Str, 10)
+	return gasPremium, nil
+}
+
+func (wm *WalletManager) GetEstimateFeeCap(msg interface{}) (*big.Int, error) {
+	blockCids := make([]interface{}, 0)
+
+	params := []interface{}{
+		msg,
+		0,
+		blockCids,
+	}
+	result, err := wm.WalletClient.Call("Filecoin.GasEstimateFeeCap", params)
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	gasPremium, _ := big.NewInt(0).SetString( result.Str, 10)
+	return gasPremium, nil
+}
+
+func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, value *big.Int, nonce uint64) (*txFeeInfo, error) {
 	var (
 		gasLimit *big.Int
 		gasPrice *big.Int
@@ -470,36 +503,31 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 	gasLimit = wm.Config.FixGasLimit
 	gasPrice = wm.Config.FixGasPrice
 
-	//if wm.Config.FixGasLimit.Cmp(big.NewInt(0)) > 0 {
-	//	//配置设置固定gasLimit
-	//	gasLimit = wm.Config.FixGasLimit
-	//} else {
-	//	//动态计算gas消耗
-	//
-	//	gasLimit, err = wm.GetGasEstimated(from, to, value, data)
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//}
-	//
-	//if wm.Config.FixGasPrice.Cmp(big.NewInt(0)) > 0 {
-	//	//配置设置固定gasLimit
-	//	gasPrice = wm.Config.FixGasPrice
-	//} else {
-	//	//动态计算gasPrice
-	//
-	//	gasPrice, err = wm.GetGasPrice()
-	//	if err != nil {
-	//		return nil, err
-	//	}
-	//}
+	gasPremium, err := wm.GetEstimateGasPremium(from, gasLimit )
+	if err != nil {
+		return nil, err
+	}
 
-	//	fee := new(big.Int)
-	//	fee.Mul(gasLimit, gasPrice)
+	msg := map[string]interface{}{
+		"to" :  to,
+		"From" : from,
+		"value" : value.String(),
+		"gasPremium" : gasPremium.String(),
+		"nonce" : nonce,
+		"gasLimit" : gasLimit,
+		"method" : builtin.MethodSend,
+	}
+
+	gasFeeCap, err := wm.GetEstimateFeeCap(msg)
+	if err != nil {
+		return nil, err
+	}
 
 	feeInfo := &txFeeInfo{
 		GasLimit: gasLimit,
 		GasPrice: gasPrice,
+		GasPremium: gasPremium,
+		GasFeeCap: gasFeeCap,
 		//		Fee:      fee,
 	}
 

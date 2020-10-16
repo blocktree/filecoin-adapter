@@ -134,6 +134,8 @@ type FilBlockHeader struct {
 type txFeeInfo struct {
 	GasLimit *big.Int
 	GasPrice *big.Int
+	GasPremium *big.Int
+	GasFeeCap *big.Int
 	Fee      *big.Int
 }
 
