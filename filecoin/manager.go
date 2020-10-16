@@ -251,16 +251,16 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 						continue
 					}
 
-					if wm.Config.ignoreCheckBalance==false {
-						//判断一下余额是否足够
-						balance, err := wm.GetAddrBalance( transaction.To )
-						if err != nil {
-							continue
-						}
-						if balance.Balance.Cmp(amountBigInt)==-1 {
-							continue
-						}
-					}
+					//if wm.Config.ignoreCheckBalance==false {
+					//	//判断一下余额是否足够
+					//	balance, err := wm.GetAddrBalance( transaction.To )
+					//	if err != nil {
+					//		continue
+					//	}
+					//	if balance.Balance.Cmp(amountBigInt)==-1 {
+					//		continue
+					//	}
+					//}
 
 					itemTransactions[transactinIndex].Gas = strconv.FormatInt( gasUsed, 10)
 				}
