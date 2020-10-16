@@ -135,6 +135,9 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 		currentHeight = currentHeight + 1
 		bs.wm.Log.Std.Info("block scanner scanning height: %d ...", currentHeight)
 
+		//是否跳块
+		hasSkip := false
+
 		localBlock, err := bs.wm.GetBlockByHeight(currentHeight, true)
 		for{
 			if localBlock.Height >= currentHeight{	//如果从rpc获取到的高度，确实等于需要获取的高度
@@ -144,6 +147,7 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 				bs.wm.Log.Std.Info("block scanner scanning height: %d not found, find next height : %d", currentHeight, nextHeight)
 				currentHeight = nextHeight
 				localBlock, err = bs.wm.GetBlockByHeight(currentHeight, true)
+				hasSkip = true
 			}
 		}
 		if err != nil {
@@ -156,6 +160,9 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 		//判断hash是否上一区块的hash
 		if currentHash != localBlock.PrevBlockHash {
 			previousHeight = currentHeight - 1
+			if hasSkip {
+				previousHeight = previousHeight - 1
+			}
 			bs.wm.Log.Std.Info("block has been fork on height: %d.", currentHeight)
 			bs.wm.Log.Std.Info("block height: %d local hash = %s ", previousHeight, currentHash)
 			bs.wm.Log.Std.Info("block height: %d mainnet hash = %s ", previousHeight, localBlock.PrevBlockHash)
