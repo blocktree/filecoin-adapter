@@ -25,6 +25,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/filecoin-project/go-address"
 	"github.com/filecoin-project/specs-actors/actors/builtin"
+	"github.com/shopspring/decimal"
 	"math/big"
 	"sort"
 	"strconv"
@@ -356,6 +357,17 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 	if err != nil {
 		return nil, err
 	}
+
+	//地址余额从大到小排序
+	sort.Slice(addrBalanceArray, func(i int, j int) bool {
+		a_amount, _ := decimal.NewFromString(addrBalanceArray[i].Balance)
+		b_amount, _ := decimal.NewFromString(addrBalanceArray[j].Balance)
+		if a_amount.LessThan(b_amount) {
+			return true
+		} else {
+			return false
+		}
+	})
 
 	for _, addrBalance := range addrBalanceArray {
 

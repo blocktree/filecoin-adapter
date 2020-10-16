@@ -827,6 +827,70 @@ func (bs *FILBlockScanner) GetBalanceByAddress(address ...string) ([]*openwallet
 	}
 
 	return addrsBalance, nil
+
+	//type addressBalance struct {
+	//	Address string
+	//	Index   uint64
+	//	Balance *openwallet.Balance
+	//}
+	//
+	//threadControl := make(chan int, 20)
+	//defer close(threadControl)
+	//resultChan := make(chan *addressBalance, 1024)
+	//defer close(resultChan)
+	//done := make(chan int, 1)
+	//count := len(address)
+	//resultBalance := make([]*openwallet.Balance, count)
+	//resultSaveFailed := false
+	////save result
+	//go func() {
+	//	for i := 0; i < count; i++ {
+	//		addr := <-resultChan
+	//		if addr.Balance != nil {
+	//			resultBalance[addr.Index] = addr.Balance
+	//		} else {
+	//			resultSaveFailed = true
+	//		}
+	//	}
+	//	done <- 1
+	//}()
+	//
+	//query := func(addr *addressBalance) {
+	//	threadControl <- 1
+	//	defer func() {
+	//		resultChan <- addr
+	//		<-threadControl
+	//	}()
+	//
+	//	balance, err := bs.wm.GetAddrBalance(addr.Address)
+	//
+	//	if err != nil {
+	//		bs.wm.Log.Error("get address[", addr.Address, "] balance failed, err=", err)
+	//		return
+	//	}
+	//
+	//	addrBalance := &openwallet.Balance{
+	//		Symbol:  bs.wm.Symbol(),
+	//		Address: addr.Address,
+	//		Balance: common.BigIntToDecimals(balance.Balance, bs.wm.Decimal()).String(),
+	//	}
+	//
+	//	addr.Balance = addrBalance
+	//}
+	//
+	//for i, _ := range address {
+	//	addrbl := &addressBalance{
+	//		Address: address[i],
+	//		Index:   uint64(i),
+	//	}
+	//	go query(addrbl)
+	//}
+	//
+	//<-done
+	//if resultSaveFailed {
+	//	return nil, fmt.Errorf("get balance of addresses failed. ")
+	//}
+	//return resultBalance, nil
 }
 
 //Run 运行

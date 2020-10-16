@@ -151,7 +151,7 @@ func TestWalletManager_GetEstimateFeeRate(t *testing.T) {
 }
 
 func TestGetAddressBalance(t *testing.T) {
-	symbol := "TESTFIL"
+	symbol := "FIL"
 	assetsMgr, err := openw.GetAssetsAdapter(symbol)
 	if err != nil {
 		log.Error(symbol, "is not support")
@@ -168,7 +168,8 @@ func TestGetAddressBalance(t *testing.T) {
 	bs := assetsMgr.GetBlockScanner()
 
 	addrs := []string{
-		"t16dpawoyjfvfaezcnoyodez4ccqeymycxzsnl4iq",	//7.161410963146223911
+		"f17pyryrvxchy4g65mtj7y5eqo37frf36n4grzu3i",
+		"f1gwfc6khygbgxcmrevv7ryw6rz3imzem7e2r37qi",
 	}
 
 	balances, err := bs.GetBalanceByAddress(addrs...)
