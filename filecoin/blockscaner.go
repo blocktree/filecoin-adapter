@@ -537,7 +537,6 @@ func (bs *FILBlockScanner) InitExtractResult(sourceKey string, tx *Transaction, 
 		txExtractData = &openwallet.TxExtractData{}
 	}
 
-	//status := "1"
 	reason := ""
 
 	bs.wm.Log.Std.Info("find_extract_transaction, hash : %v, to: %v, status: %v", tx.Hash, tx.To, tx.Status )
