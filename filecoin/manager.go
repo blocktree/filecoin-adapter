@@ -250,6 +250,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 					if exitCode!=OK_ExitCode{
 						//continue
 						itemTransactions[transactinIndex].Status = "0"
+						wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
 					}else{
 						itemTransactions[transactinIndex].Status = "1"
 					}

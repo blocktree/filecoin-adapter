@@ -538,12 +538,9 @@ func (bs *FILBlockScanner) InitExtractResult(sourceKey string, tx *Transaction, 
 	}
 
 	//status := "1"
-	if tx.Status=="0" {
-		bs.wm.Log.Std.Info("found_wrong_transaction, ", tx.Hash, " , ", tx.Status )
-	}
 	reason := ""
 
-	bs.wm.Log.Std.Info("find_extract_transaction, hash : ", tx.Hash, " , to: ", tx.To, " , status: ", tx.Status )
+	bs.wm.Log.Std.Info("find_extract_transaction, hash : %v, to: %v, status: %v", tx.Hash, tx.To, tx.Status )
 
 	amount, err := GetRealAmountStr( tx.Value ,bs.wm.Decimal() )
 	if err!=nil {
