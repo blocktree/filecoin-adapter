@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/blocktree/filecoin-adapter/filecoinTransaction"
 	"github.com/blocktree/filecoin-adapter/filecoin_addrdec"
@@ -166,6 +167,11 @@ func (wm *WalletManager) GetBlockByHeight(height uint64, getTxs bool) (*OwBlock,
 		if err != nil {
 			return nil, err
 		}
+		if len( block.Transactions ) > 0 {
+			if block.Transactions[0].Status == "-1" {
+				return nil, errors.New("block has no receipt yet")
+			}
+		}
 	}
 
 	return &block, nil
@@ -254,6 +260,9 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 						//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
 					}else{
 						itemTransactions[transactinIndex].Status = "1"
+					}
+					if exitCode==-1{
+						itemTransactions[transactinIndex].Status = "-1"
 					}
 					//if exitCode!=OK_ExitCode{
 					//	continue

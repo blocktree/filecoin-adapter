@@ -139,6 +139,10 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 		thisRoundHeight := currentHeight
 
 		localBlock, err := bs.wm.GetBlockByHeight(currentHeight, true)
+		if err != nil {
+			bs.wm.Log.Std.Info("block scanner can not get rpc-server block height; unexpected error: %v", err)
+			break
+		}
 		for{
 			if localBlock.Height >= currentHeight{	//如果从rpc获取到的高度，确实等于需要获取的高度
 				break
@@ -147,7 +151,10 @@ func (bs *FILBlockScanner) ScanBlockTask() {
 				bs.wm.Log.Std.Info("block scanner scanning height: %d not found, find next height : %d", currentHeight, nextHeight)
 				currentHeight = nextHeight
 				localBlock, err = bs.wm.GetBlockByHeight(currentHeight, true)
-
+				if err != nil {
+					bs.wm.Log.Std.Info("block scanner can not get rpc-server block height; unexpected error: %v", err)
+					break
+				}
 			}
 		}
 		if err != nil {
