@@ -543,6 +543,8 @@ func (bs *FILBlockScanner) InitExtractResult(sourceKey string, tx *Transaction, 
 	}
 	reason := ""
 
+	bs.wm.Log.Std.Info("find_extract_transaction, hash : ", tx.Hash, " , to: ", tx.To, " , " )
+
 	amount, err := GetRealAmountStr( tx.Value ,bs.wm.Decimal() )
 	if err!=nil {
 		bs.wm.Log.Std.Error("transfer tx.Value error, ", err)
