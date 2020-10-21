@@ -115,6 +115,7 @@ type Transaction struct {
 	Nonce            uint64 `json:"Nonce"`
 	BlockHeight      uint64 //transaction scanning 的时候对其进行赋值
 	Method           int64  //方法
+	Status           string //链上状态，0：失败，1：成功
 }
 
 type FilBlock struct {

@@ -537,7 +537,7 @@ func (bs *FILBlockScanner) InitExtractResult(sourceKey string, tx *Transaction, 
 		txExtractData = &openwallet.TxExtractData{}
 	}
 
-	status := "1"
+	//status := "1"
 	reason := ""
 
 	amount, err := GetRealAmountStr( tx.Value ,bs.wm.Decimal() )
@@ -576,7 +576,7 @@ func (bs *FILBlockScanner) InitExtractResult(sourceKey string, tx *Transaction, 
 		From:        []string{from + ":" + amount},
 		To:          []string{to + ":" + amount},
 		IsMemo:      true,
-		Status:      status,
+		Status:      tx.Status,
 		Reason:      reason,
 		TxType:      0,
 	}

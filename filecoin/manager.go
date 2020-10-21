@@ -248,8 +248,14 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 						continue
 					}
 					if exitCode!=OK_ExitCode{
-						continue
+						//continue
+						itemTransactions[transactinIndex].Status = "0"
+					}else{
+						itemTransactions[transactinIndex].Status = "1"
 					}
+					//if exitCode!=OK_ExitCode{
+					//	continue
+					//}
 
 					//if wm.Config.ignoreCheckBalance==false {
 					//	//判断一下余额是否足够
