@@ -251,7 +251,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 					if exitCode!=OK_ExitCode{
 						//continue
 						itemTransactions[transactinIndex].Status = "0"
-						wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
+						//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
 					}else{
 						itemTransactions[transactinIndex].Status = "1"
 					}
@@ -446,7 +446,7 @@ func (wm *WalletManager) GetTransactionReceipt(txCid string) (int64, int64, erro
 		gasUsed = gjson.Get(result.Raw, "GasUsed").Int()
 	}
 
-	wm.Log.Std.Info("transaction get receipt result, hash : %v, exitCode : %d, result string : ", txCid, exitCode, result.Str )
+	//wm.Log.Std.Info("transaction get receipt result, hash : %v, exitCode : %d, result string : ", txCid, exitCode, result.Str )
 
 	return exitCode, gasUsed, nil
 
