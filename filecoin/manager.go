@@ -440,7 +440,7 @@ func (wm *WalletManager) GetTransactionReceipt(txCid string) (int64, int64, erro
 	exitCode := gjson.Get(result.Raw, "ExitCode").Int()
 	gasUsed := gjson.Get(result.Raw, "GasUsed").Int()
 
-	wm.Log.Std.Info("transaction get receipt result, hash : %v, exitCode : %d", txCid, exitCode )
+	wm.Log.Std.Info("transaction get receipt result, hash : %v, exitCode : %d, result string : ", txCid, exitCode, result.Str )
 
 	return exitCode, gasUsed, nil
 
