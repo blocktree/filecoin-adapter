@@ -98,6 +98,7 @@ func NewBlockTransaction(transactionJson *gjson.Result) (*Transaction, error) {
 		return nil, err
 	}
 
+	result.Status = "0"
 	return result, nil
 }
 
