@@ -245,6 +245,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 				if bigIntOk && amountBigInt.Cmp( big.NewInt(0) )==1 {
 					exitCode, gasUsed, err := wm.GetTransactionReceipt( transaction.Hash )
 					if err != nil {
+						wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", itemTransactions[transactinIndex].Hash, err )
 						continue
 					}
 					if exitCode!=OK_ExitCode{
