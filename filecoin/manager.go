@@ -557,7 +557,7 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 	if err != nil {
 		return nil, err
 	}
-	gasLimit = gasLimit.Add( gasLimit, big.NewInt(5000000) )
+	gasLimit = gasLimit.Add( gasLimit, big.NewInt(50000) )
 
 	gasPremium, err := wm.GetEstimateGasPremium(from, gasLimit )
 	if err != nil {
