@@ -143,7 +143,7 @@ type txFeeInfo struct {
 
 func (txFee *txFeeInfo) CalcFee() error {
 	fee := new(big.Int)
-	fee.Mul(txFee.GasLimit, txFee.GasPrice)
+	fee.Mul(txFee.GasFeeCap, txFee.GasLimit)
 	txFee.Fee = fee
 	return nil
 }

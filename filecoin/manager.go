@@ -504,6 +504,21 @@ func (wm *WalletManager) GetEstimateGasPremium(from string, gasLimit *big.Int) (
 	return gasPremium, nil
 }
 
+func (wm *WalletManager) GetEstimateGasLimit(msg interface{}) (*big.Int, error) {
+	blockCids := make([]interface{}, 0)
+
+	params := []interface{}{
+		msg,
+		blockCids,
+	}
+	result, err := wm.WalletClient.Call("Filecoin.GasEstimateGasLimit", params)
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	gasLimit, _ := big.NewInt(0).SetString( result.Raw, 10)
+	return gasLimit, nil
+}
+
 func (wm *WalletManager) GetEstimateFeeCap(msg interface{}) (*big.Int, error) {
 	blockCids := make([]interface{}, 0)
 
@@ -516,8 +531,8 @@ func (wm *WalletManager) GetEstimateFeeCap(msg interface{}) (*big.Int, error) {
 	if err != nil {
 		return big.NewInt(0), err
 	}
-	gasPremium, _ := big.NewInt(0).SetString( result.Str, 10)
-	return gasPremium, nil
+	gasFeeCap, _ := big.NewInt(0).SetString( result.Str, 10)
+	return gasFeeCap, nil
 }
 
 func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, value *big.Int, nonce uint64) (*txFeeInfo, error) {
@@ -528,20 +543,28 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 	gasLimit = wm.Config.FixGasLimit
 	gasPrice = wm.Config.FixGasPrice
 
+	msg := map[string]interface{}{
+		"to" :  to,
+		"From" : from,
+		"value" : value.String(),
+		//"gasPremium" : gasPremium.String(),
+		"nonce" : nonce,
+		//"gasLimit" : gasLimit,
+		"method" : builtin.MethodSend,
+	}
+
+	gasLimit, err := wm.GetEstimateGasLimit(msg)
+	if err != nil {
+		return nil, err
+	}
+
 	gasPremium, err := wm.GetEstimateGasPremium(from, gasLimit )
 	if err != nil {
 		return nil, err
 	}
 
-	msg := map[string]interface{}{
-		"to" :  to,
-		"From" : from,
-		"value" : value.String(),
-		"gasPremium" : gasPremium.String(),
-		"nonce" : nonce,
-		"gasLimit" : gasLimit,
-		"method" : builtin.MethodSend,
-	}
+	msg["gasPremium"] = gasPremium.String()
+	msg["gasLimit"] = gasLimit
 
 	gasFeeCap, err := wm.GetEstimateFeeCap(msg)
 	if err != nil {
