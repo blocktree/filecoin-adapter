@@ -110,6 +110,14 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 		wm.Config.GasPremiumAdd = big.NewInt(50000)
 	}
 
+	gasFeeCapAdd := c.String("gasFeeCapAdd")
+	if gasFeeCapAdd!=""{
+		wm.Config.GasFeeCapAdd = new(big.Int)
+		wm.Config.GasFeeCapAdd.SetString(gasFeeCapAdd, 10)
+	}else{
+		wm.Config.GasFeeCapAdd = big.NewInt(500000)
+	}
+
 	return nil
 
 }

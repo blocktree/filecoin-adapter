@@ -578,6 +578,7 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 	if err != nil {
 		return nil, err
 	}
+	gasFeeCap = gasFeeCap.Add( gasFeeCap, wm.Config.GasFeeCapAdd )
 	//gasFeeCap = gasPrice
 
 	feeInfo := &txFeeInfo{
