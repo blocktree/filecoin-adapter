@@ -408,7 +408,7 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 		//计算手续费
 		fee, createErr := decoder.wm.GetTransactionFeeEstimated(addrBalance.Address, sumRawTx.SummaryAddress, sumAmount_BI, nonce)
 		if createErr != nil {
-			//decoder.wm.Log.Std.Error("GetTransactionFeeEstimated from[%v] -> to[%v] failed, err=%v", addrBalance.Address, sumRawTx.SummaryAddress, createErr)
+			decoder.wm.Log.Std.Error("GetTransactionFeeEstimated from[%v] -> to[%v] failed, err=%v", addrBalance.Address, sumRawTx.SummaryAddress, createErr)
 			return nil, createErr
 		}
 
@@ -431,7 +431,7 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 		fees := common.BigIntToDecimals(fee.Fee, decoder.wm.Decimal())
 
 		decoder.wm.Log.Info(
-			"address : ", addrBalance.Address,
+			"summary_log_1, address : ", addrBalance.Address,
 			" balance : ", addrBalance.Balance,
 			" fees : ", fees,
 			" sumAmount : ", sumAmount,
@@ -456,6 +456,7 @@ func (decoder *TransactionDecoder) CreateSimpleSummaryRawTransaction(wrapper ope
 			fee,
 			nonce)
 		if createErr != nil {
+			decoder.wm.Log.Std.Error("createRawTransaction, err=%v", addrBalance.Address, sumRawTx.SummaryAddress, createErr)
 			return nil, createErr
 		}
 
