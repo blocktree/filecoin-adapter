@@ -575,49 +575,59 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 		"method" : builtin.MethodSend,
 	}
 
-	//sendSpec := map[string]interface{}{
-	//	"MaxFee" : "0",
-	//}
-	//
-	//blockCids := make([]interface{}, 0)
-	//
-	//params := []interface{}{
-	//	msg,
-	//	sendSpec,
-	//	blockCids,
-	//}
-	//msgInfoJson, err := wm.WalletClient.Call("Filecoin.GasEstimateMessageGas", params)
+	sendSpec := map[string]interface{}{
+		"MaxFee" : "0",
+	}
+
+	blockCids := make([]interface{}, 0)
+
+	params := []interface{}{
+		msg,
+		sendSpec,
+		blockCids,
+	}
+	msgInfoJson, err := wm.WalletClient.Call("Filecoin.GasEstimateMessageGas", params)
+	if err != nil {
+		return nil, err
+	}
+
+	gasLimitStr := gjson.Get(msgInfoJson.Raw, "GasLimit").String()
+	gasLimit, _ = big.NewInt(0).SetString(gasLimitStr, 10)
+	gasPremiumStr := gjson.Get(msgInfoJson.Raw, "GasPremium").String()
+	gasPremium, _ := big.NewInt(0).SetString(gasPremiumStr, 10)
+	gasFeeCapStr := gjson.Get(msgInfoJson.Raw, "GasFeeCap").String()
+	gasFeeCap, _ := big.NewInt(0).SetString(gasFeeCapStr, 10)
+
+	gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
+
+	mpoolNonce, err := wm.GetMpoolGetNonce( from )
+	if err != nil {
+		return nil, err
+	}
+	if mpoolNonce>nonce { //如果现在要打出的交易，nonce小于内存池中的nonce，加大premium50万
+		gasPremium = gasPremium.Add( gasPremium, big.NewInt(500000) )
+	}
+
+	//gasLimit, err := wm.GetEstimateGasLimit(msg)
 	//if err != nil {
 	//	return nil, err
 	//}
+	//gasLimit = gasLimit.Add( gasLimit, wm.Config.GasLimitAdd )
 	//
-	//gasLimitStr := gjson.Get(msgInfoJson.Raw, "GasLimit").String()
-	//gasLimit, _ = big.NewInt(0).SetString(gasLimitStr, 10)
-	//gasPremiumStr := gjson.Get(msgInfoJson.Raw, "GasPremium").String()
-	//gasPremium, _ := big.NewInt(0).SetString(gasPremiumStr, 10)
-	//gasFeeCapStr := gjson.Get(msgInfoJson.Raw, "GasFeeCap").String()
-	//gasFeeCap, _ := big.NewInt(0).SetString(gasFeeCapStr, 10)
-
-	gasLimit, err := wm.GetEstimateGasLimit(msg)
-	if err != nil {
-		return nil, err
-	}
-	gasLimit = gasLimit.Add( gasLimit, wm.Config.GasLimitAdd )
-
-	gasPremium, err := wm.GetEstimateGasPremium(from, gasLimit )
-	if err != nil {
-		return nil, err
-	}
-	gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
-
-	msg["gasPremium"] = gasPremium.String()
-	msg["gasLimit"] = gasLimit
-
-	gasFeeCap, err := wm.GetEstimateFeeCap(msg)
-	if err != nil {
-		return nil, err
-	}
-	gasFeeCap = gasFeeCap.Add( gasFeeCap, wm.Config.GasFeeCapAdd )
+	//gasPremium, err := wm.GetEstimateGasPremium(from, gasLimit )
+	//if err != nil {
+	//	return nil, err
+	//}
+	//gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
+	//
+	//msg["gasPremium"] = gasPremium.String()
+	//msg["gasLimit"] = gasLimit
+	//
+	//gasFeeCap, err := wm.GetEstimateFeeCap(msg)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//gasFeeCap = gasFeeCap.Add( gasFeeCap, wm.Config.GasFeeCapAdd )
 
 	feeInfo := &txFeeInfo{
 		GasLimit: gasLimit,
@@ -629,6 +639,24 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 
 	feeInfo.CalcFee()
 	return feeInfo, nil
+}
+
+// GetMpoolGetNonce
+// {"jsonrpc":"2.0","result":1236,"id":1}
+func (wm *WalletManager) GetMpoolGetNonce(address string) (uint64, error) {
+	params := []interface{}{
+		address,
+	}
+	result, err := wm.WalletClient.Call("Filecoin.MpoolGetNonce", params)
+	if err != nil {
+		return 0, err
+	}
+
+	nonce := result.Uint()
+	if nonce <= 0 {
+		return 0, errors.New(" wrong nonce ")
+	}
+	return nonce, nil
 }
 
 func GetBlockFromTipSet(tipSet *TipSet) (OwBlock, error){

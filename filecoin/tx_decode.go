@@ -145,6 +145,7 @@ func (decoder *TransactionDecoder) CreateFilRawTransaction(wrapper openwallet.Wa
 
 	addressesBalanceList := make([]AddrBalance, 0, len(addresses))
 
+	var feeErr error
 	for i, addr := range addresses {
 		balance, err := decoder.wm.GetAddrBalance(addr.Address) //decoder.wm.ApiClient.getBalance(addr.Address, decoder.wm.Config.IgnoreReserve, decoder.wm.Config.ReserveAmount)
 		if err != nil {
@@ -158,8 +159,8 @@ func (decoder *TransactionDecoder) CreateFilRawTransaction(wrapper openwallet.Wa
 		balance.Nonce = nonce
 
 		//计算手续费
-		feeInfo, err = decoder.wm.GetTransactionFeeEstimated(addr.Address, to, amountBigInt, nonce)
-		if err != nil {
+		feeInfo, feeErr = decoder.wm.GetTransactionFeeEstimated(addr.Address, to, amountBigInt, nonce)
+		if feeErr != nil {
 			continue
 		}
 
@@ -176,6 +177,9 @@ func (decoder *TransactionDecoder) CreateFilRawTransaction(wrapper openwallet.Wa
 		return addressesBalanceList[i].Balance.Cmp(addressesBalanceList[j].Balance) >= 0
 	})
 
+	if feeInfo==nil && feeErr!=nil {
+		return feeErr
+	}
 	fee := feeInfo.Fee.Uint64()
 	//if len(rawTx.FeeRate) > 0 {
 	//	fee = uint64(decoder.wm.Config.FixedFee) //convertFromAmount(rawTx.FeeRate)
