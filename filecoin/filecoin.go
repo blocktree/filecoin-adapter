@@ -118,6 +118,12 @@ func (wm *WalletManager) LoadAssetsConfig(c config.Configer) error {
 		wm.Config.GasFeeCapAdd = big.NewInt(500000)
 	}
 
+	nonceDiffInt, err := c.Int64("nonceDiff")
+	if err!=nil {
+		nonceDiffInt = 3600
+	}
+	wm.Config.NonceDiff = uint64(nonceDiffInt)
+
 	return nil
 
 }

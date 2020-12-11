@@ -64,6 +64,8 @@ type WalletConfig struct {
 
 	//gasFeeCap增量值
 	GasFeeCapAdd *big.Int
+
+	NonceDiff uint64
 }
 
 func NewConfig() *WalletConfig {

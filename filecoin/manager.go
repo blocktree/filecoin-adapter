@@ -732,7 +732,7 @@ func (wm *WalletManager) GetAddressNonce(wrapper openwallet.WalletDAI, address s
 			now := uint64(time.Now().Unix())
 			diff, _ := math.SafeSub(now, saveTime)
 
-			if diff > 3600 { //当前时间减去保存时间，超过1小时，就不算了
+			if diff > wm.Config.NonceDiff { //当前时间减去保存时间，超过1小时，就不算了
 				nonce = 0
 			} else {
 				nonce = common.NewString(nonceStrArr[0]).UInt64()
