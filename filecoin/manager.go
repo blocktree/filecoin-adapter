@@ -575,6 +575,7 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 		"method" : builtin.MethodSend,
 	}
 
+	//----------直接获取----------
 	sendSpec := map[string]interface{}{
 		"MaxFee" : "0",
 	}
@@ -600,14 +601,7 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 
 	gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
 
-	mpoolNonce, err := wm.GetMpoolGetNonce( from )
-	if err != nil {
-		return nil, err
-	}
-	if mpoolNonce>nonce { //如果现在要打出的交易，nonce小于内存池中的nonce，加大premium50万
-		gasPremium = gasPremium.Add( gasPremium, big.NewInt(2000000) )
-	}
-
+	//----------分步获取----------
 	//gasLimit, err := wm.GetEstimateGasLimit(msg)
 	//if err != nil {
 	//	return nil, err
@@ -628,6 +622,14 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 	//	return nil, err
 	//}
 	//gasFeeCap = gasFeeCap.Add( gasFeeCap, wm.Config.GasFeeCapAdd )
+
+	mpoolNonce, err := wm.GetMpoolGetNonce( from )
+	if err != nil {
+		return nil, err
+	}
+	if mpoolNonce>nonce { //如果现在要打出的交易，nonce小于内存池中的nonce，加大premium50万
+		gasPremium = gasPremium.Add( gasPremium, big.NewInt(5000000) )
+	}
 
 	feeInfo := &txFeeInfo{
 		GasLimit: gasLimit,
