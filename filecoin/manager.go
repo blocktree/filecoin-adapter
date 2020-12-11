@@ -605,7 +605,7 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 		return nil, err
 	}
 	if mpoolNonce>nonce { //如果现在要打出的交易，nonce小于内存池中的nonce，加大premium50万
-		gasPremium = gasPremium.Add( gasPremium, big.NewInt(500000) )
+		gasPremium = gasPremium.Add( gasPremium, big.NewInt(1500000) )
 	}
 
 	//gasLimit, err := wm.GetEstimateGasLimit(msg)
