@@ -594,12 +594,15 @@ func (wm *WalletManager) GetTransactionFeeEstimated(from string, to string, valu
 
 	gasLimitStr := gjson.Get(msgInfoJson.Raw, "GasLimit").String()
 	gasLimit, _ = big.NewInt(0).SetString(gasLimitStr, 10)
+	gasLimit = gasLimit.Add( gasLimit, wm.Config.GasLimitAdd )
+
 	gasPremiumStr := gjson.Get(msgInfoJson.Raw, "GasPremium").String()
 	gasPremium, _ := big.NewInt(0).SetString(gasPremiumStr, 10)
+	gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
+
 	gasFeeCapStr := gjson.Get(msgInfoJson.Raw, "GasFeeCap").String()
 	gasFeeCap, _ := big.NewInt(0).SetString(gasFeeCapStr, 10)
-
-	gasPremium = gasPremium.Add( gasPremium, wm.Config.GasPremiumAdd )
+	gasFeeCap = gasFeeCap.Add( gasFeeCap, wm.Config.GasFeeCapAdd )
 
 	//----------分步获取----------
 	//gasLimit, err := wm.GetEstimateGasLimit(msg)
