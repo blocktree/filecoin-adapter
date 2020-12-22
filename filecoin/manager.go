@@ -658,7 +658,7 @@ func (wm *WalletManager) GetMpoolGetNonce(address string) (uint64, error) {
 	}
 
 	nonce := result.Uint()
-	if nonce <= 0 {
+	if nonce < 0 {
 		return 0, errors.New(" wrong nonce ")
 	}
 	return nonce, nil
