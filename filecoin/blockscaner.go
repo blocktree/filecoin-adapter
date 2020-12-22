@@ -85,7 +85,7 @@ func (bs *FILBlockScanner) SetRescanBlockHeight(height uint64) error {
 		return errors.New("block height to rescan must greater than 0.")
 	}
 
-	localBlock, err := bs.wm.GetBlockByHeight(height, false)
+	localBlock, err := bs.wm.GetBlockByHeight(height, true)
 
 	if err != nil {
 		return errors.New("block height can not find in wallet")
@@ -741,7 +741,7 @@ func (bs *FILBlockScanner) GetCurrentBlockHeader() (*openwallet.BlockHeader, err
 		return nil, err
 	}
 
-	block, err := bs.wm.GetBlockByHeight(blockHeight, false)
+	block, err := bs.wm.GetBlockByHeight(blockHeight, true)
 	if err != nil {
 		bs.wm.Log.Errorf("get block spec by block number failed, err=%v", err)
 		return nil, err
@@ -775,7 +775,7 @@ func (bs *FILBlockScanner) GetScannedBlockHeader() (*openwallet.BlockHeader, err
 
 		//就上一个区块链为当前区块
 		blockHeight = blockHeight - 1
-		block, err := bs.wm.GetBlockByHeight(blockHeight, false)
+		block, err := bs.wm.GetBlockByHeight(blockHeight, true)
 		if err != nil {
 			bs.wm.Log.Errorf("get block spec by block number failed, err=%v", err)
 			return nil, err
