@@ -229,6 +229,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 			return err
 		}
 
+		hasFindReceipt := false
 		for transactinIndex, _ := range itemTransactions {
 			transaction := itemTransactions[transactinIndex]
 
@@ -249,36 +250,25 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 				//判断，如果value大于0，还要判断状态
 				amountBigInt, bigIntOk := big.NewInt(0).SetString( transaction.Value, 10)
 				if bigIntOk && amountBigInt.Cmp( big.NewInt(0) )==1 {
-					//exitCode, gasUsed, err := wm.GetTransactionReceipt( transaction.Hash )
-					//if err != nil {
-					//	wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", itemTransactions[transactinIndex].Hash, err )
-					//	continue
-					//}
-					//if exitCode!=OK_ExitCode{
-					//	//continue
-					//	itemTransactions[transactinIndex].Status = "0"
-					//	//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
-					//}else{
-					//	itemTransactions[transactinIndex].Status = "1"
-					//}
-					//if exitCode==-1{
-					//	itemTransactions[transactinIndex].Status = "-1"
-					//}
-					////if exitCode!=OK_ExitCode{
-					////	continue
-					////}
-					//
-					////if wm.Config.ignoreCheckBalance==false {
-					////	//判断一下余额是否足够
-					////	balance, err := wm.GetAddrBalance( transaction.To )
-					////	if err != nil {
-					////		continue
-					////	}
-					////	if balance.Balance.Cmp(amountBigInt)==-1 {
-					////		continue
-					////	}
-					////}
-					//
+					if hasFindReceipt==false{
+						exitCode, _, err := wm.GetTransactionReceipt( transaction.Hash )
+						if err != nil {
+							wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", itemTransactions[transactinIndex].Hash, err )
+							continue
+						}
+						if exitCode!=OK_ExitCode{
+							//continue
+							itemTransactions[transactinIndex].Status = "0"
+							//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
+						}else{
+							itemTransactions[transactinIndex].Status = "1"
+						}
+						if exitCode==-1{
+							itemTransactions[transactinIndex].Status = "-1"
+						}
+						hasFindReceipt = true
+					}
+
 					//itemTransactions[transactinIndex].Gas = strconv.FormatInt( gasUsed, 10)
 				}
 
