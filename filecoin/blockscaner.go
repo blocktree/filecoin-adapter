@@ -531,7 +531,7 @@ func (bs *FILBlockScanner) extractTransaction(trx *Transaction, result *ExtractR
 			bs.wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", trx.Hash, err )
 			return
 		}
-		if exitCode==OK_ExitCode{
+		if exitCode!=OK_ExitCode{
 			//continue
 			trx.Status = "0"
 			//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
@@ -553,7 +553,7 @@ func (bs *FILBlockScanner) extractTransaction(trx *Transaction, result *ExtractR
 			bs.wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", trx.Hash, err )
 			return
 		}
-		if exitCode==OK_ExitCode{
+		if exitCode!=OK_ExitCode{
 			//continue
 			trx.Status = "0"
 			//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
