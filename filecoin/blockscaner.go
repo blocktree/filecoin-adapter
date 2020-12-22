@@ -85,7 +85,7 @@ func (bs *FILBlockScanner) SetRescanBlockHeight(height uint64) error {
 		return errors.New("block height to rescan must greater than 0.")
 	}
 
-	localBlock, err := bs.wm.GetBlockByHeight(height, true)
+	localBlock, err := bs.wm.GetBlockByHeight(height, false)
 
 	if err != nil {
 		return errors.New("block height can not find in wallet")
@@ -526,12 +526,44 @@ func (bs *FILBlockScanner) extractTransaction(trx *Transaction, result *ExtractR
 	accountID1, ok1 := scanTargetFunc(openwallet.ScanTarget{Address: from, Symbol: bs.wm.Symbol(), BalanceModelType: openwallet.BalanceModelTypeAddress})
 	//订阅地址为交易单中的接收者
 	if ok1 {
+		exitCode, _, err := bs.wm.GetTransactionReceipt( trx.Hash )
+		if err != nil {
+			bs.wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", trx.Hash, err )
+			return
+		}
+		if exitCode==OK_ExitCode{
+			//continue
+			trx.Status = "0"
+			//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
+		}else{
+			trx.Status = "1"
+		}
+		if exitCode==-1{
+			trx.Status = "-1"
+		}
+
 		bs.InitExtractResult(accountID1, trx, result, 1)
 	}
 
 	accountID2, ok2 := scanTargetFunc(openwallet.ScanTarget{Address: to, Symbol: bs.wm.Symbol(), BalanceModelType: openwallet.BalanceModelTypeAddress})
 	//订阅地址为交易单中的接收者
 	if ok2 {
+		exitCode, _, err := bs.wm.GetTransactionReceipt( trx.Hash )
+		if err != nil {
+			bs.wm.Log.Std.Error("transaction get receipt error, hash : %v, err : %v", trx.Hash, err )
+			return
+		}
+		if exitCode==OK_ExitCode{
+			//continue
+			trx.Status = "0"
+			//wm.Log.Std.Info("transaction, hash : %v, to: %v, status: %v", itemTransactions[transactinIndex].Hash, itemTransactions[transactinIndex].To, itemTransactions[transactinIndex].Status )
+		}else{
+			trx.Status = "1"
+		}
+		if exitCode==-1{
+			trx.Status = "-1"
+		}
+
 		bs.InitExtractResult(accountID2, trx, result, 2)
 	}
 }
@@ -709,7 +741,7 @@ func (bs *FILBlockScanner) GetCurrentBlockHeader() (*openwallet.BlockHeader, err
 		return nil, err
 	}
 
-	block, err := bs.wm.GetBlockByHeight(blockHeight, true)
+	block, err := bs.wm.GetBlockByHeight(blockHeight, false)
 	if err != nil {
 		bs.wm.Log.Errorf("get block spec by block number failed, err=%v", err)
 		return nil, err
@@ -743,7 +775,7 @@ func (bs *FILBlockScanner) GetScannedBlockHeader() (*openwallet.BlockHeader, err
 
 		//就上一个区块链为当前区块
 		blockHeight = blockHeight - 1
-		block, err := bs.wm.GetBlockByHeight(blockHeight, true)
+		block, err := bs.wm.GetBlockByHeight(blockHeight, false)
 		if err != nil {
 			bs.wm.Log.Errorf("get block spec by block number failed, err=%v", err)
 			return nil, err
