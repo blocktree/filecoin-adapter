@@ -29,6 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/filecoin-project/go-state-types/crypto"
 	"github.com/filecoin-project/specs-actors/actors/builtin"
+	"github.com/shopspring/decimal"
 	"github.com/tidwall/gjson"
 	"math/big"
 	"strconv"
@@ -469,10 +470,19 @@ func (wm *WalletManager) SendRawTransaction( message *filecoinTransaction.Messag
 
 	params := []interface{}{ callMsg }
 
+	now1 := int64( time.Now().Nanosecond() )
+
 	result, err := wm.WalletClient.CallWithToken(accessToken, "Filecoin.MpoolPush", params)
+
+	now2 := int64( time.Now().Nanosecond() )
+	cha := decimal.NewFromInt(now2).Sub( decimal.NewFromInt(now1)).Div( decimal.NewFromInt( 1e9 ) )
+
 	if err != nil {
+		wm.Log.Info("send_to_" + message.To.String() + "_" + strconv.FormatUint(message.Nonce, 10) + ", use : " + cha.String() )
 		return "", err
 	}
+	wm.Log.Info("send_to_" + message.To.String() + "_" + strconv.FormatUint(message.Nonce, 10) + ", use : " + cha.String() )
+
 	txHash := gjson.Get(result.Raw, "/").String()
 	return txHash, nil
 }

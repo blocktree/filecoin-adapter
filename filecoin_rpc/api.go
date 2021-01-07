@@ -39,7 +39,7 @@ func (c *Client) CallWithToken(accessToken, method string, params []interface{})
 	body["method"] = method
 	body["params"] = params
 
-	req.SetTimeout(240000000000 )
+	//req.SetTimeout(240000000000 )
 
 	r, err := req.Post(c.BaseURL, req.BodyJSON(&body), authHeader)
 
