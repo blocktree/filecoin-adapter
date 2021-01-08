@@ -86,8 +86,16 @@ func (decoder *TransactionDecoder) SubmitRawTransaction(wrapper openwallet.Walle
 
 	sig := rawTx.Signatures[rawTx.Account.AccountID][0].Signature
 
+	now1 := decimal.NewFromInt( time.Now().UnixNano() )
+
 	txid, err := decoder.wm.SendRawTransaction(message, sig, decoder.wm.Config.AccessToken) //.SendRawTransaction(message, sig)
+
+	now2 := decimal.NewFromInt( time.Now().UnixNano() )
+	cha := now2.Sub( now1).Div( decimal.NewFromInt( 1e9 ) )
+
 	if err != nil {
+		decoder.wm.Log.Errorf("send_to_%v_" + strconv.FormatUint(message.Nonce, 10) + ", use : " + cha.String() + "s, now1 :" + now1.String() + ", now2 : " + now2.String(), rawTx.To )
+
 		decoder.wm.UpdateAddressNonce(wrapper, from, 0)
 		decoder.wm.Log.Error("Error Tx to send: ", rawTx.RawHex)
 		return nil, err
