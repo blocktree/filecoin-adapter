@@ -223,6 +223,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 	allTransaction := make([]*Transaction, 0)
 
 	transactionCidMap := make(map[string]string) //防止重复用的map
+	transactionNonceMap := make(map[string]string) //防止重复用的map，key value = from_nonce
 	for _, filBlock := range owBlock.TipSet.Blks{
 		itemTransactions, err := wm.GetTransactionInBlock( filBlock.BlockHeaderCid )
 		if err != nil {
@@ -275,10 +276,18 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 				itemTransactions[transactinIndex].Gas = "0"
 				itemTransactions[transactinIndex].GasPrice = "0"
 
+				nonceKey := transaction.From + "_" + strconv.FormatUint(transaction.Nonce, 10)
+				_, nonceFound := transactionNonceMap[ nonceKey ]
+				if nonceFound {
+					wm.Log.Std.Error("transaction equal transaction, hash : %v", transaction.Hash )
+					continue
+				}
+
 				allTransaction = append(allTransaction, itemTransactions[transactinIndex])
 
 				//加上在map中，防止重复
 				transactionCidMap[ transaction.Hash ] = transaction.Hash
+				transactionNonceMap[ nonceKey ] = nonceKey
 			}
 		}
 	}
