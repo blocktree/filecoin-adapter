@@ -91,6 +91,10 @@ func (dec *AddressDecoderV2) AddressVerify(address string, opts ...interface{}) 
 	decodeBytes := append([]byte{protocol}, addressEnd[:payLoadHashLength]...)
 	check := owcrypt.Hash(decodeBytes, ChecksumHashLength, owcrypt.HASH_ALG_BLAKE2B)
 
+	if len(addressEnd)<24 || len(check)<4 {
+		return false
+	}
+
 	for i := 0; i < 4; i++ {
 		if check[i] != addressEnd[payLoadHashLength+i] {
 			return false
