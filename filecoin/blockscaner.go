@@ -673,7 +673,7 @@ func (bs *FILBlockScanner) extractTxOutput(trx *Transaction, txExtractData *open
 	txOutput := &openwallet.TxOutPut{}
 	txOutput.Recharge.Sid = openwallet.GenTxOutPutSID(tx.TxID, bs.wm.Symbol(), "", uint64(0))
 	txOutput.Recharge.TxID = tx.TxID
-	txOutput.Recharge.Address = to
+	txOutput.Recharge.Address = to + ":" + tx.Amount
 	txOutput.Recharge.Coin = coin
 	txOutput.Recharge.Amount = tx.Amount
 	txOutput.Recharge.Symbol = coin.Symbol
