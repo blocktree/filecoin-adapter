@@ -5,14 +5,13 @@ go 1.13
 require (
 	github.com/asdine/storm v2.1.2+incompatible
 	github.com/astaxie/beego v1.12.1
-	github.com/blocktree/go-owaddress v1.1.7 // indirect
 	github.com/blocktree/go-owcrypt v1.1.2
 	github.com/blocktree/openwallet/v2 v2.0.4
 	github.com/ethereum/go-ethereum v1.9.9
 	github.com/filecoin-project/go-address v0.0.4
 	github.com/filecoin-project/go-crypto v0.0.0-20191218222705-effae4ea9f03
 	github.com/filecoin-project/go-state-types v0.0.0-20200928172055-2df22083d8ab
-	github.com/filecoin-project/specs-actors v0.9.12
+	github.com/filecoin-project/specs-actors v0.9.13
 	github.com/imroc/req v0.2.4
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-cid v0.0.7
