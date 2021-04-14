@@ -169,7 +169,7 @@ func (wm *WalletManager) GetBlockByHeight(height uint64, getTxs bool) (*OwBlock,
 		}
 		if len( block.Transactions ) > 0 {
 			if block.Transactions[0].Status == "-1" {
-				return nil, errors.New("block has no receipt yet")
+				return nil, errors.New("block has no receipt yet, height :"+ strconv.FormatUint(height, 10) )
 			}
 		}
 	}
