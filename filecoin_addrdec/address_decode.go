@@ -69,7 +69,7 @@ func (dec *AddressDecoderV2) AddressEncode(publicKey []byte, opts ...interface{}
 // AddressVerify 地址校验
 func (dec *AddressDecoderV2) AddressVerify(address string, opts ...interface{}) bool {
 
-	if len(address)<41 {
+	if len(address)!=41 {
 		return false
 	}
 
