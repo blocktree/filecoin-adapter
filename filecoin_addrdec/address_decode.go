@@ -69,7 +69,11 @@ func (dec *AddressDecoderV2) AddressEncode(publicKey []byte, opts ...interface{}
 // AddressVerify 地址校验
 func (dec *AddressDecoderV2) AddressVerify(address string, opts ...interface{}) bool {
 
-	if len(address)!=41 {
+	if len(address)==41 && strings.HasPrefix(address, dec.GetNtwk()+"1"){
+
+	}else if len(address)==86 && strings.HasPrefix(address, dec.GetNtwk()+"3"){
+
+	}else{
 		return false
 	}
 
