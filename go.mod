@@ -5,7 +5,7 @@ go 1.13
 require (
 	github.com/asdine/storm v2.1.2+incompatible
 	github.com/astaxie/beego v1.12.1
-	github.com/blocktree/go-owcrypt v1.1.2
+	github.com/blocktree/go-owcrypt v1.1.9
 	github.com/blocktree/openwallet/v2 v2.0.4
 	github.com/ethereum/go-ethereum v1.9.9
 	github.com/filecoin-project/go-address v0.0.4
