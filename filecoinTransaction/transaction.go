@@ -88,31 +88,6 @@ func VerifyAndCombineTransaction(emptyTrans, signature string) (string, bool) {
 		return "", false
 	}
 	return hex.EncodeToString(bytes), true
-	//
-	//tp, err := ts.NewTxPayLoad()
-	//if err != nil {
-	//	return "", false
-	//}
-	//
-	//msg, _ := hex.DecodeString(tp.ToBytesString())
-	//
-	//pubkey, _ := hex.DecodeString(ts.SenderPubkey)
-	//
-	//sig, err := hex.DecodeString(signature)
-	//if err != nil || len(sig) != 64{
-	//	return "", false
-	//}
-	//
-	//if owcrypt.SUCCESS != owcrypt.Verify(pubkey, nil, msg, sig, owcrypt.ECC_CURVE_ED25519) {
-	//	return "", false
-	//}
-	//
-	//signned, err := ts.GetSignedTransaction(signature)
-	//if err != nil {
-	//	return "", false
-	//}
-	//
-	//return signned, true
 }
 
 func GetBigIntAmountStr(amountStr string, amountDecimal int32) (string, error){
