@@ -159,6 +159,11 @@ func (decoder *TransactionDecoder) CreateFilRawTransaction(wrapper openwallet.Wa
 		if err != nil {
 			return err
 		}
+		
+		if decimal.NewFromBigInt(balance.Balance, 0).LessThanOrEqual(decimal.Zero) {
+			continue
+		}
+		
 		nonce_onchain, err := decoder.wm.GetAddrOnChainNonce(addr.Address)
 		if err != nil {
 			return err
