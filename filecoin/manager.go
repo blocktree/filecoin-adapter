@@ -231,7 +231,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 		if nextTipSet.Height >= nextHeight{	//如果从rpc获取到的高度，确实等于需要获取的高度
 			break
 		}else{ //获取到+1的高度，太小了，这样就要获取再加1的高度
-			nextHeight := nextHeight + 1
+			nextHeight = nextHeight + 1
 			nextTipSet, err = wm.GetTipSetByHeight(nextHeight)
 			if err!= nil {
 				return err
