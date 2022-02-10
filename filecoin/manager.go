@@ -16,6 +16,7 @@ package filecoin
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -304,12 +305,42 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 
 		transactions[transactionIndex].Gas = "0"
 		transactions[transactionIndex].GasPrice = "0"
+
+		//Applied := gjson.Get(blockMessageReceiptJSON.Raw, "Applied").Bool()
+		//if Applied {
+		//	transactions[transactionIndex].Applied = "true"
+		//}else{
+		//	transactions[transactionIndex].Applied = "false"
+		//}
+
+		returnStr := gjson.Get(blockMessageReceiptJSON.Raw, "Return").String()
+		if len(returnStr)>0 {
+			if "g/UAQA==" == returnStr{
+				transactions[transactionIndex].Applied = "true"
+			}else{
+				transactions[transactionIndex].Applied = "false"
+			}
+			//returnOrigin, err := base64.StdEncoding.DecodeString(returnStr)
+			//if err!=nil{
+			//	return errors.New(err.Error() + "Error transaction return : "+returnStr )
+			//}
+			//fmt.Println(returnStr, " : ", string(returnOrigin) )
+
+			//paramsJSON, err := wm.StateDecodeParams(transactions[transactionIndex].To, transactions[transactionIndex].Method, returnStr, owBlock.TipSet.TipSetKey)
+			//if err!= nil{
+			//	return errors.New(err.Error() + "Error transaction return : "+returnStr )
+			//}
+			//
+			//fmt.Println( paramsJSON.Raw )
+		}
+
+
 	}
 
 	owBlock.Transactions = make([]*Transaction, 0)
 	transactionCidMap := make(map[string]string) //防止重复用的map
 	for _, transaction := range transactions{
-		if transaction.Method != 0 {
+		if transaction.Method != Message_Method_Transfer && transaction.Method != Message_Method_Approve{
 			continue
 		}
 		_, ok := transactionCidMap[ transaction.Hash ]
@@ -392,6 +423,44 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 	//}
 	//
 	//owBlock.Transactions = allTransaction
+
+	//处理多签方法
+	for transactionIndex, transaction := range owBlock.Transactions{
+		if transaction.Method != Message_Method_Approve {	//如果不是Approve方法，不处理
+			continue
+		}
+
+		//decodeparams
+		paramsJSON, err := wm.StateDecodeParams(transaction.To, transaction.Method, transaction.Params, owBlock.TipSet.TipSetKey)
+		if err!= nil{
+			return errors.New(err.Error() + "Error transaction params : "+transaction.Params+" in hash : "+transaction.Hash )
+		}
+
+		txid := gjson.Get( paramsJSON.Raw, "ID").Uint()
+		//proposalHash := gjson.Get( paramsJSON.Raw, "ProposalHash").String()
+
+		if txid>=0 {	//proposalhash和txid有内容
+			//获取多签地址，该区块上的交易
+			msigTransactions, err := wm.MsigGetPending(transaction.To, owBlock.TipSet.TipSetKey)
+			if err!= nil{
+				return errors.New(err.Error() + " Error transaction msig address get pending error : "+transaction.To+" in tipset : "+owBlock.TipSet.TipSetKey )
+			}
+
+			for _, msigTransaction := range msigTransactions{
+				if msigTransaction.Id == txid && transaction.Applied=="true"{
+					owBlock.Transactions[transactionIndex].OriginTo = owBlock.Transactions[transactionIndex].To
+					owBlock.Transactions[transactionIndex].To = msigTransaction.To
+
+					owBlock.Transactions[transactionIndex].OriginValue = owBlock.Transactions[transactionIndex].Value
+					owBlock.Transactions[transactionIndex].Value = msigTransaction.Value
+
+					owBlock.Transactions[transactionIndex].OriginMethod = owBlock.Transactions[transactionIndex].Method
+					owBlock.Transactions[transactionIndex].Method = msigTransaction.Method
+				}
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -425,6 +494,8 @@ func (wm *WalletManager) GetTipSetByHeight(height uint64) (*TipSet, error) {
 	for cidIndex, cidJSON := range gjson.Get(result.Raw, "Cids").Array() {
 		tipSet.Blks[ cidIndex ].BlockHeaderCid = gjson.Get(cidJSON.Raw, "/").String()
 		tipSet.BlkCids = append(tipSet.BlkCids, tipSet.Blks[ cidIndex ].BlockHeaderCid)
+
+		tipSet.TipSetKey = tipSet.TipSetKey + gjson.Get(cidJSON.Raw, "/").String()
 	}
 
 	return tipSet, nil
@@ -445,6 +516,56 @@ func (wm *WalletManager) GetMaxTipsetHeight() (uint64, error) {
 		return 0, err
 	}
 	return tipSet.Height, nil
+}
+
+// StateDecodeParams
+// {"jsonrpc":"2.0","result":{"ID":74,"ProposalHash":"R+UOi7lPK54qu4UJGgtCXpkNbS2DjMfuErTNDCyml3Y="},"id":1}
+func (wm *WalletManager) StateDecodeParams(toAddress string, messageMethod int64, paramsStr string, tipSetKey string) (*gjson.Result, error) {
+
+	params, _ := base64.StdEncoding.DecodeString(paramsStr)
+	tipCids := GetTipSetKey( tipSetKey)
+
+	callParams := []interface{}{toAddress, messageMethod, params, tipCids}
+
+	result, err := wm.WalletClient.Call("Filecoin.StateDecodeParams", callParams)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+// MsigGetPending
+// {"jsonrpc":"2.0","result":[{"ID":74,"To":"f1zk24asnwjxab2w76qhoulegbcnwy7rrxzdppwwa","Value":"83160000000000000000","Method":0,"Params":null,"Approved":["f01460141"]}],"id":1}
+func (wm *WalletManager) MsigGetPending(toAddress string, tipSetKey string) ([]*MsigTransaction, error) {
+
+	tipCids := GetTipSetKey( tipSetKey)
+
+	callParams := []interface{}{toAddress, tipCids}
+
+	result, err := wm.WalletClient.Call("Filecoin.MsigGetPending", callParams)
+	if err != nil {
+		return nil, err
+	}
+
+	msigTransactions := make([]*MsigTransaction, 0)
+
+	for _, msigTransactionJSON := range result.Array() {
+		msigTransaction, err := NewMsigTransaction(&msigTransactionJSON)
+		if err != nil {
+			return nil, err
+		}
+		msigTransactions = append(msigTransactions, &msigTransaction)
+	}
+
+	return msigTransactions, nil
+
+	//var msigTransaction MsigTransaction
+	//err = json.Unmarshal([]byte(result.Raw), &msigTransaction)
+	//if err != nil {
+	//	return 0, err
+	//}
+	//return tipSet.Height, nil
 }
 
 // {"ActiveSyncs":[{"Base":{"Cids":[{"/":"bafy2bzacecnamqgqmifpluoeldx7zzglxcljo6oja4vrmtj7432rphldpdmm2"}],"Blocks":[{"Miner":"t00","Ticket":{"VRFProof":"X4oDOWswmmD7fT0z3RNIPQVGS85f2dBhceeowoDiQhY="},"ElectionProof":{"WinCount":0,"VRFProof":null},"BeaconEntries":[{"Round":0,"Data":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="}],"WinPoStProof":null,"Parents":[{"/":"bafyreiaqpwbbyjo4a42saasj36kkrpv4tsherf2e7bvezkert2a7dhonoi"}],"ParentWeight":"0","Height":0,"ParentStateRoot":{"/":"bafy2bzacech3yb7xlb7c57v2xh7rvmt4skeidk7z2g36llksaz4biflblbt24"},"ParentMessageReceipts":{"/":"bafy2bzacedswlcz5ddgqnyo3sak3jmhmkxashisnlpq6ujgyhe4mlobzpnhs6"},"Messages":{"/":"bafy2bzacecmda75ovposbdateg7eyhwij65zklgyijgcjwynlklmqazpwlhba"},"BLSAggregate":null,"Timestamp":1598306400,"BlockSig":null,"ForkSignaling":0,"ParentBaseFee":"100000000"}],"Height":0},"Target":{"Cids":[{"/":"bafy2bzacedp5jq2a4hprhksnz6cwzcbar7pmpf2ytsr67bwtcadc3t3ddvfw6"}],"Blocks":[{"Miner":"t02838","Ticket":{"VRFProof":"haWIp6tSyXhePXyNclQaHH8jgTmMDdT6xlJvW4Ked//UymUbF081Rixu5rh079upA5wIU8XCgUO2l8oo3PEl21SG0EdEY/2eNtbLj/78+IKRQEVkQ0sGwz/21jnp/RsY"},"ElectionProof":{"WinCount":1,"VRFProof":"peUWvR2CnnliM3hGK9aqpgv9ILxbflMuvbaC/7me242IvS5WYZyc4Qq0t8DmugCmF3b4ecQCPipFz2vBYnfQDtnLQrLf07GJizVj/ReAL5yUl7N8LO8IBCiK+1bxpKy6"},"BeaconEntries":[{"Round":226789,"Data":"i3mg89T0ZxyZ4sIFVUzOamdKQx/tCyuKbXi2x5lhXpslar3WdDXp8+nhGjsNQ71JC0BTBHfbVdBmWTGU3trpoVwKl1e7E8Uil4PjHOtuIsqfW8aJPxlCGXs87eeDfA9R"},{"Round":226790,"Data":"oLw9Jn0NQ3zMlnxZMnVdcRpVamAsA6SVShR1KKXj8MsISJfIy4A4rcosVegdH/1ODwiNKxSEJcungO7An9XTHHpppEkqK+nHMoI/q7ZSdkH72B4EiaPgjbY8L05uvp1w"},{"Round":226791,"Data":"tb56SYtPvSlheGkf3FSITxjgy9hoJHqZZcMr8/Puapzr17h/JPLw62/XSPBzRYNPEkdqJ2qrY2vs2kDor+nymZZZ5DpXBynXcINa6wXTQoLmFWb/kqIpS8S+0T7baB1j"},{"Round":226792,"Data":"jGgofcxNF1r0B1GHeMuCqR5SDjYUyIzBKI1hAH4Mw/OSJjXGlp0KM99aRttTelwdA6oUp3QkGQdDQVdPfD/KOe5n8wRcXMe8TanlkdQhDPH16YPYowjXWNMKwLgj23Sm"},{"Round":226793,"Data":"gy9nxiqogVzhqK+ycrKoQzx+yXkoprRFnqUmRt4+uJGuUPszD6OK61ZumAnNbJERAowfCttMaQNMdNxB6Zru7qh87DZQ8KfvODdtewXye0aT2Ust8BR8/zeF2ttNsS88"},{"Round":226794,"Data":"jpJy3d1oeWjqj44OaI+dzWj4g9GGmBSP27T6MArf9J8nbGgUxTcudwc7FQhyXmrWB3G6tvQzGWTNZ5C/O+LdNy/VT26WlMlftG88TDFtB9IuYkxHAYg2cFPrGnh931cs"},{"Round":226795,"Data":"uKEFx9Pcq91HDeXjH0ZiBzeX9f7EVIUz52DsJ5U7F3wJ1+6LicvF0RCnmCyL1A8KC3Zp3Xd+62XryfPqpX4ib67/1v1d0lyOSE+GAOVtUDxUJ4R5m8HSQc+W+52v0rWk"},{"Round":226796,"Data":"ryd4QY/kAtIhiiJi2AEWDSqg4wiXIUcja5nosHdc61VV7tPO6mqHGrcUiTD08aNLC1njTCuniShoJx+XbQnnwcvwKjvNreDdg8vQ8ESjZkeZ8YPtrDikc754DYjOuIKb"},{"Round":226797,"Data":"rffVY9niX57wGC2IlB2iZSfmr9J+p512Voc/kCqxcLIqcLkDbNrrqSvNm3R0lMFDEG0zSCCOqrb6qj37hmyt6dXLoezyeXZY0XuJjwPCSFe1iJvXrzIJUMVgmDS5LsVq"},{"Round":226798,"Data":"i9FGszNlBW2u/fzYM9fLRsKeffrFl5+udFdxsILEVlgHjRmepH00TIX0JojQdO1+Ea04tq751zRspCE/IHX7QQgLQPytvd21kHmRcqEPgNE0LUYCYfsd6tl5T+aTjUzu"},{"Round":226799,"Data":"megQWojVn2BbNq1E80nX2cNRJgVlPiAneSiPV120qbYsG9niQG8WmeNsHudhaFUgC5MdUIxoMh0YDGrJcBuFIGCfio0lTGhs/yaFY9OwvyOGf4r78SCj0RqTntN+1Dh+"},{"Round":226800,"Data":"l13gG996+2oQrKxridMJh3yeJek+t8HEP7oAiy7d1MdM+zIBwQ8JwcOEjoUg65YbEk1zgbMgn87EYrKRYq3hE1fXQdfjDu9vhqYb7jhjCImKxXNYSddQmKWt/4/zmgcA"},{"Round":226801,"Data":"sWHZ/dlAwDTTX/FBbjqsD4xuHWe6xKU2fSufM5gB6PWql5MPga4wRcUs3OOqHxw/FIkHzHYAHEa8kY9/jhkNonMJhR1D3S2faZw0m34LC87Tj2ZoPaS/XwGhqEwQ3OJ0"},{"Round":226802,"Data":"pyBvRuYwGMWJKY5ojMcltTVw3JTX4POZym+HldlaLQaqfU399ZLHPopbB/384FFVChzqt2Fv0TuJCS90+2EOhiTSV89bpoHLDpSwl/+ixDKT8ndpcyIqhAep/YDOKF2B"},{"Round":226803,"Data":"sVfVMkbRr2791fo9H3cMLpH7tyntpPl+VXQC0F462EWaD+VVp7+Mcw8PHT8GcW7uEV4Uuh0WZBq+6xYyt7D/dEWCWh+glU/VwVb/9xMfZsqswjmIT/foahCSCh0qno78"}],"WinPoStProof":[{"PoStProof":3,"ProofBytes":"hA5WOmBzZAyVT0M4NkIaCbvMVeRXklZ60rTKMdVZMWsVbtmorgNwkDpsd/mootO1sREnijTJb6Ef4KwFhFYIn91tNW3pmbrRKXHF3MxnOcu4FsurD2OY2FO5Wfm94R93FTu4AY7HnKN3pz8BRF/geg/R59FANvrNZ1QWADCN6X3kzC+XeTpHh33vtE7tEa4dkP/zp+N0FFvgTBO3mPLz7eS3RZ+0wd1+n0bJtRhjuqBEeu4LV+itmZMaNWGttb56"}],"Parents":[{"/":"bafy2bzaced2ibvl5txexdx7rl3kmzlmzblzhz42xs6g3k56k45v4n4lnbeqly"}],"ParentWeight":"2617125071","Height":130959,"ParentStateRoot":{"/":"bafy2bzacearip4rzokw3vqff4hsunlzgyng45htraasf2d4bv7tui7lk47t3c"},"ParentMessageReceipts":{"/":"bafy2bzacedrjkcitpysoa6ohdc332zui37ltgkn6pj35dw6hu7wujx5dklfim"},"Messages":{"/":"bafy2bzacebt3qdn3sy2tzqigwdm3ihrjfwf3qovsg6orx37er7iphwydmgkpq"},"BLSAggregate":{"Type":2,"Data":"prQgMJCU3UGxsmuUr31fmjF8L2iqwJF/eOvXriJhZSNU/oc6rZesCTTZR7cuCZrzCzMHu0SwYvAq25bQzcQ6VRFpVySiyiDlua9OhQSgDthbbHmp8o1szebLkIMcq0IV"},"Timestamp":1602235170,"BlockSig":{"Type":2,"Data":"j1Es240u1TvBG7mlS6UjAmPbYffnvOjwuArdoS+JLj4MBZOfbtyfxHz4nrqWFacnAItpvBAsJGKXWQo3IY8jxghR0X3upUSsxqcSn8bjytOLGwtWLf2QNl5oIcG1D+5C"},"ForkSignaling":0,"ParentBaseFee":"400988190"}],"Height":130959},"Stage":3,"Height":5320,"Start":"2020-10-12T15:26:21.442312647Z","End":"0001-01-01T00:00:00Z","Message":""},{"Base":null,"Target":null,"Stage":0,"Height":0,"Start":"0001-01-01T00:00:00Z","End":"0001-01-01T00:00:00Z","Message":""},{"Base":null,"Target":null,"Stage":0,"Height":0,"Start":"0001-01-01T00:00:00Z","End":"0001-01-01T00:00:00Z","Message":""}],"VMApplied":0}

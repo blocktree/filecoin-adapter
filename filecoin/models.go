@@ -30,6 +30,10 @@ import (
 
 const CidLength = 62
 
+const Message_Method_Transfer = int64(0)
+//多签转账，审核通过的方法
+const Message_Method_Approve = int64(3)
+
 const OK_ExitCode = 0
 
 type OwBlock struct {
@@ -45,6 +49,7 @@ type OwBlock struct {
 type TipSet struct {
 	Blks []FilBlockHeader 	`json:"Blocks"`
 	BlkCids []string
+	TipSetKey string
 	Height uint64 			`json:"Height"`
 }
 
@@ -90,6 +95,19 @@ func NewBlockHeader(blockHeaderJson *gjson.Result) (FilBlockHeader, error) {
 	return result, nil
 }
 
+func NewMsigTransaction(msigTransactionJSON *gjson.Result) (MsigTransaction, error) {
+	result := MsigTransaction{}
+
+	err := json.Unmarshal([]byte(msigTransactionJSON.Raw), &result)
+	if err != nil {
+		return result, err
+	}
+
+	//result.Id = gjson.Get(msigTransactionJSON.Raw, "ID").String()
+
+	return result, nil
+}
+
 func NewBlockTransaction(transactionJson *gjson.Result) (*Transaction, error) {
 	result := &Transaction{}
 
@@ -117,6 +135,20 @@ type Transaction struct {
 	BlockHeight      uint64 //transaction scanning 的时候对其进行赋值
 	Method           int64  //方法
 	Status           string //链上状态，0：失败，1：成功
+
+	Params			 string `json:"Params"` //传入参数
+	Applied			 string //是否最后Approve，true or false
+
+	OriginTo			 string //原有的目标地址
+	OriginValue			 string //原有的金额
+	OriginMethod		 int64  //原有的method
+}
+
+type MsigTransaction struct{
+	Id					uint64 `json:"ID"`
+	To					string `json:"To"`
+	Value				string `json:"Value"`
+	Method				int64 `json:"Method"`
 }
 
 type FilBlock struct {
