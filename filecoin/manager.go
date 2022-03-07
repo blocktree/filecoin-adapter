@@ -420,15 +420,19 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 			return errors.New(err.Error() + "Error transaction params : "+transaction.Params+" in hash : "+transaction.Hash )
 		}
 
-		txid := gjson.Get( paramsJSON.Raw, "ID").Uint()
+		//txid := gjson.Get( paramsJSON.Raw, "ID").Uint()
+		txidExists := gjson.Get( paramsJSON.Raw, "ID").Exists()
 		//proposalHash := gjson.Get( paramsJSON.Raw, "ProposalHash").String()
 
-		if txid>=0 {	//proposalhash和txid有内容
+		if txidExists {
+		//if txid>=0 {	//proposalhash和txid有内容
 			//获取多签地址，该区块上的交易
 			msigTransactions, err := wm.MsigGetPending(transaction.To, owBlock.TipSet.TipSetKey)
 			if err!= nil{
 				return errors.New(err.Error() + " Error transaction msig address get pending error : "+transaction.To+" in tipset : "+owBlock.TipSet.TipSetKey )
 			}
+
+			txid := gjson.Get( paramsJSON.Raw, "ID").Uint()
 
 			for _, msigTransaction := range msigTransactions{
 				if msigTransaction.Id == txid && transaction.Applied=="true"{
