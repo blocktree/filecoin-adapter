@@ -410,7 +410,7 @@ func (wm *WalletManager) SetOwBlockTransactions(owBlock *OwBlock) (error){
 		if transaction.Method != Message_Method_Approve {	//如果不是Approve方法，不处理
 			continue
 		}
-		if !strings.HasPrefix(transaction.To, "f2") {	//如果不是f2多签地址为接收地址，不处理
+		if !strings.HasPrefix(transaction.To, "f2") &&  !strings.HasPrefix(transaction.To, "f0") {	//如果不是f2或f0多签地址为接收地址，不处理
 			continue
 		}
 
